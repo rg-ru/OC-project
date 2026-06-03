@@ -1,13 +1,91 @@
+const CONSENT_KEY = "oc:consent";
+const CONSENT_COOKIE = "oc_cookie_consent";
+const CONSENT_MAX_AGE_SECONDS = 60 * 60 * 24 * 180;
+const DEFAULT_CONSENT = {
+  necessary: true,
+  preferences: false,
+  location: false,
+  analytics: false,
+  updatedAt: null,
+};
+
+function readStorage(key, fallback = null) {
+  try {
+    const value = localStorage.getItem(key);
+    return value === null ? fallback : value;
+  } catch {
+    return fallback;
+  }
+}
+
+function writeStorage(key, value) {
+  try {
+    localStorage.setItem(key, value);
+  } catch {
+    return false;
+  }
+  return true;
+}
+
+function removeStorage(key) {
+  try {
+    localStorage.removeItem(key);
+  } catch {
+    return false;
+  }
+  return true;
+}
+
+function getConsent() {
+  const stored = readStorage(CONSENT_KEY);
+  if (!stored) return { ...DEFAULT_CONSENT };
+  try {
+    return { ...DEFAULT_CONSENT, ...JSON.parse(stored), necessary: true };
+  } catch {
+    return { ...DEFAULT_CONSENT };
+  }
+}
+
+function writeConsentCookie(consent) {
+  const granted = Object.entries(consent)
+    .filter(([key, value]) => key !== "updatedAt" && value)
+    .map(([key]) => key)
+    .join(".");
+  const secure = location.protocol === "https:" ? "; Secure" : "";
+  document.cookie = `${CONSENT_COOKIE}=${encodeURIComponent(granted)}; Max-Age=${CONSENT_MAX_AGE_SECONDS}; Path=/; SameSite=Lax${secure}`;
+}
+
+function clearConsentCookie() {
+  document.cookie = `${CONSENT_COOKIE}=; Max-Age=0; Path=/; SameSite=Lax`;
+}
+
+function saveConsent(nextConsent) {
+  const consent = {
+    ...DEFAULT_CONSENT,
+    ...nextConsent,
+    necessary: true,
+    updatedAt: new Date().toISOString(),
+  };
+  writeStorage(CONSENT_KEY, JSON.stringify(consent));
+  writeConsentCookie(consent);
+  return consent;
+}
+
+function consentAllows(category) {
+  return Boolean(getConsent()[category]);
+}
+
 const state = {
-  jurisdiction: localStorage.getItem("oc:j") || "antiochian",
-  theme: localStorage.getItem("oc:theme") || "dark",
+  jurisdiction: readStorage("oc:j", "antiochian"),
+  theme: readStorage("oc:theme", "dark"),
   selectedDate: new Date(),
-  quoteIndex: Number(localStorage.getItem("oc:quote") || "0"),
+  quoteIndex: Number(readStorage("oc:quote", "0")),
   calendarMode: "month",
   language: "greek",
   flashIndex: 0,
   flashFlipped: false,
-  plan: localStorage.getItem("oc:plan") || "new-testament",
+  plan: readStorage("oc:plan", "new-testament"),
+  userPosition: null,
 };
 
 const feastData = [
@@ -199,6 +277,15 @@ const readingPlans = {
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => Array.from(document.querySelectorAll(selector));
 
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
 function formatDate(date, options = {}) {
   return new Intl.DateTimeFormat("en", { weekday: "long", month: "long", day: "numeric", year: "numeric", ...options }).format(date);
 }
@@ -368,7 +455,7 @@ function renderMetrics() {
   $("#prayer-count").textContent = String(prayedCount);
 
   const plan = readingPlans[state.plan];
-  const progress = Number(localStorage.getItem(`oc:reading:${state.plan}`) || "0");
+  const progress = Number(readStorage(`oc:reading:${state.plan}`, "0"));
   const percent = Math.min(100, Math.round((progress / plan.total) * 100));
   $("#reading-progress").textContent = `${percent}%`;
   $("#reading-plan-label").textContent = plan.label;
@@ -394,7 +481,7 @@ function renderQuote() {
   const quote = quoteLibrary[state.quoteIndex % quoteLibrary.length];
   $("#quote-text").textContent = quote.text;
   $("#quote-source").textContent = quote.source;
-  localStorage.setItem("oc:quote", String(state.quoteIndex));
+  writeStorage("oc:quote", String(state.quoteIndex));
 }
 
 function renderCalendar() {
@@ -486,7 +573,7 @@ function renderStudy() {
     button.addEventListener("click", () => {
       const next = new Set(getCompletedLessons());
       next.add(button.dataset.lesson);
-      localStorage.setItem("oc:lessons", JSON.stringify([...next]));
+      writeStorage("oc:lessons", JSON.stringify([...next]));
       renderStudy();
       renderMetrics();
     });
@@ -497,11 +584,11 @@ function renderStudy() {
 }
 
 function getCompletedLessons() {
-  return JSON.parse(localStorage.getItem("oc:lessons") || "[]");
+  return JSON.parse(readStorage("oc:lessons", "[]"));
 }
 
 function renderQuiz() {
-  const index = Number(localStorage.getItem("oc:quiz") || "0") % quiz.length;
+  const index = Number(readStorage("oc:quiz", "0")) % quiz.length;
   const item = quiz[index];
   $("#quiz-area").innerHTML = `
     <p>${item.question}</p>
@@ -513,7 +600,7 @@ function renderQuiz() {
       const correct = button.dataset.answer === item.answer;
       button.classList.add(correct ? "correct" : "incorrect");
       $("#quiz-feedback").textContent = correct ? "Correct" : `Answer: ${item.answer}`;
-      if (correct) localStorage.setItem("oc:quiz", String(index + 1));
+      if (correct) writeStorage("oc:quiz", String(index + 1));
       setTimeout(renderQuiz, 900);
     });
   });
@@ -532,6 +619,7 @@ function renderLibrary() {
   $("#sermon-list").innerHTML = sermons.map((item) => resultItem(item.title, `${item.speaker} · ${item.topic}`, item.length)).join("");
   $("#chant-list").innerHTML = chants.map((item) => resultItem(item.title, `${item.tradition} chant`, item.tone)).join("");
   renderChurches(churches);
+  renderLocationStatus();
 }
 
 function renderIconResults() {
@@ -545,9 +633,9 @@ function renderChurches(items) {
     .map(
       (church) => `
         <div class="result-item">
-          <h4>${church.name}</h4>
-          <p>${church.jurisdiction} · ${church.city}</p>
-          <p>${church.schedule}</p>
+          <h4>${escapeHtml(church.name)}</h4>
+          <p>${escapeHtml(church.jurisdiction)} · ${escapeHtml(church.city)}${typeof church.distance === "number" ? ` · approx. ${church.distance.toFixed(1)} km away` : ""}</p>
+          <p>${escapeHtml(church.schedule)}</p>
           <div class="button-row">
             <a class="text-button" target="_blank" rel="noreferrer" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${church.name} ${church.city}`)}">Directions</a>
             <a class="text-button" href="tel:${church.phone.replaceAll(" ", "")}">Call</a>
@@ -561,11 +649,82 @@ function renderChurches(items) {
 function resultItem(title, meta, detail) {
   return `
     <div class="result-item">
-      <h4>${title}</h4>
-      <p>${meta}</p>
-      <p>${detail}</p>
+      <h4>${escapeHtml(title)}</h4>
+      <p>${escapeHtml(meta)}</p>
+      <p>${escapeHtml(detail)}</p>
     </div>
   `;
+}
+
+function renderLocationStatus(message) {
+  const status = $("#location-status");
+  if (!status) return;
+  if (message) {
+    status.textContent = message;
+    return;
+  }
+  if (state.userPosition) {
+    status.textContent = "Location was used once in this page to sort churches by distance. Coordinates were not stored.";
+  } else if (consentAllows("location")) {
+    status.textContent = "Location consent is on. Click Find Near Me to trigger your browser location prompt.";
+  } else {
+    status.textContent = "Location is off. Search manually or allow location to sort churches by distance.";
+  }
+}
+
+function sortChurchesByPosition(position) {
+  return churches
+    .map((church) => ({
+      ...church,
+      distance: distanceKm(position.coords.latitude, position.coords.longitude, church.lat, church.lng),
+    }))
+    .sort((a, b) => a.distance - b.distance);
+}
+
+function requestChurchLocation() {
+  if (!navigator.geolocation) {
+    renderLocationStatus("This browser does not support location services. Manual church search still works.");
+    return;
+  }
+
+  const button = $("#use-location");
+  button.disabled = true;
+  button.textContent = "Locating";
+  renderLocationStatus("Waiting for browser location permission...");
+
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      state.userPosition = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude,
+        accuracy: position.coords.accuracy,
+      };
+      const sorted = sortChurchesByPosition(position);
+      renderChurches(sorted);
+      renderLocationStatus(`Nearest result: ${sorted[0].name}, approx. ${sorted[0].distance.toFixed(1)} km away. Coordinates were not stored.`);
+      button.disabled = false;
+      button.textContent = "Refresh Location";
+    },
+    (error) => {
+      const denied = error.code === error.PERMISSION_DENIED;
+      renderLocationStatus(denied ? "Browser location permission was denied. Manual search still works." : "Location could not be read. Manual search still works.");
+      button.disabled = false;
+      button.textContent = "Find Near Me";
+    },
+    {
+      enableHighAccuracy: false,
+      maximumAge: 300000,
+      timeout: 10000,
+    },
+  );
+}
+
+function openLocationModal() {
+  $("#location-modal").hidden = false;
+}
+
+function closeLocationModal() {
+  $("#location-modal").hidden = true;
 }
 
 function getPrayers() {
@@ -573,7 +732,7 @@ function getPrayers() {
     { id: "p1", name: "Anonymous", text: "For the sick and those who care for them.", count: 12, pending: false },
     { id: "p2", name: "Anonymous", text: "For peace, repentance, and reconciliation.", count: 9, pending: false },
   ];
-  return JSON.parse(localStorage.getItem("oc:prayers") || JSON.stringify(fallback));
+  return JSON.parse(readStorage("oc:prayers", JSON.stringify(fallback)));
 }
 
 function renderPrayers() {
@@ -582,8 +741,8 @@ function renderPrayers() {
     .map(
       (prayer) => `
         <div class="result-item">
-          <h4>${prayer.name}</h4>
-          <p>${prayer.text}</p>
+          <h4>${escapeHtml(prayer.name)}</h4>
+          <p>${escapeHtml(prayer.text)}</p>
           <button class="text-button" type="button" data-prayer="${prayer.id}">I prayed · ${prayer.count}</button>
         </div>
       `,
@@ -593,7 +752,7 @@ function renderPrayers() {
   $$("[data-prayer]").forEach((button) => {
     button.addEventListener("click", () => {
       const next = getPrayers().map((prayer) => (prayer.id === button.dataset.prayer ? { ...prayer, count: prayer.count + 1 } : prayer));
-      localStorage.setItem("oc:prayers", JSON.stringify(next));
+      writeStorage("oc:prayers", JSON.stringify(next));
       renderPrayers();
       renderMetrics();
       renderAdmin();
@@ -603,14 +762,14 @@ function renderPrayers() {
 
 function renderAssistant() {
   $("#source-list").innerHTML = sourceLibrary.map((source) => resultItem(source.title, source.id, source.scope)).join("");
-  const history = JSON.parse(localStorage.getItem("oc:chat") || "[]");
+  const history = JSON.parse(readStorage("oc:chat", "[]"));
   if (history.length === 0) {
     history.push({
       role: "assistant",
       text: "Ask a question about fasting, prayer, feasts, Scripture, or Orthodox practice. Answers in this preview are constrained to the approved source library model.",
     });
   }
-  $("#chat-log").innerHTML = history.map((message) => `<div class="chat-message ${message.role}"><p>${message.text}</p></div>`).join("");
+  $("#chat-log").innerHTML = history.map((message) => `<div class="chat-message ${message.role}"><p>${escapeHtml(message.text)}</p></div>`).join("");
 }
 
 function answerQuestion(question) {
@@ -643,20 +802,90 @@ function renderAdmin() {
 function renderReadingsView() {
   renderReadings("#readings-full");
   renderMetrics();
-  $("#reading-note").value = localStorage.getItem("oc:readingNote") || "";
+  $("#reading-note").value = readStorage("oc:readingNote", "");
+}
+
+const LOCAL_APP_DATA_KEYS = [
+  "oc:j",
+  "oc:theme",
+  "oc:quote",
+  "oc:lessons",
+  "oc:quiz",
+  "oc:savedQuotes",
+  "oc:bookmarkedReading",
+  "oc:plan",
+  "oc:reading:new-testament",
+  "oc:reading:psalms",
+  "oc:reading:gospels",
+  "oc:readingNote",
+  "oc:prayers",
+  "oc:chat",
+];
+
+function openConsentModal() {
+  const consent = getConsent();
+  $("#consent-preferences").checked = Boolean(consent.preferences);
+  $("#consent-location").checked = Boolean(consent.location);
+  $("#consent-analytics").checked = Boolean(consent.analytics);
+  $("#consent-modal").hidden = false;
+}
+
+function closeConsentModal() {
+  $("#consent-modal").hidden = true;
+}
+
+function hideConsentBanner() {
+  $("#consent-banner").hidden = true;
+}
+
+function renderConsentBanner() {
+  const consent = getConsent();
+  $("#consent-banner").hidden = Boolean(consent.updatedAt);
+}
+
+function applyConsentChoice(nextConsent) {
+  const consent = saveConsent(nextConsent);
+  hideConsentBanner();
+  closeConsentModal();
+  if (!consent.location) {
+    state.userPosition = null;
+    renderChurches(churches);
+  }
+  renderLocationStatus();
+}
+
+function clearLocalAppData() {
+  LOCAL_APP_DATA_KEYS.forEach(removeStorage);
+  state.jurisdiction = "antiochian";
+  state.theme = "dark";
+  state.quoteIndex = 0;
+  state.plan = "new-testament";
+  state.userPosition = null;
+  $("#jurisdiction-select").value = state.jurisdiction;
+  applyTheme();
+  renderAll();
+}
+
+function resetConsent() {
+  removeStorage(CONSENT_KEY);
+  clearConsentCookie();
+  state.userPosition = null;
+  renderChurches(churches);
+  renderLocationStatus();
+  renderConsentBanner();
 }
 
 function initEvents() {
   $("#jurisdiction-select").value = state.jurisdiction;
   $("#jurisdiction-select").addEventListener("change", (event) => {
     state.jurisdiction = event.target.value;
-    localStorage.setItem("oc:j", state.jurisdiction);
+    writeStorage("oc:j", state.jurisdiction);
     renderAll();
   });
 
   $("#theme-toggle").addEventListener("click", () => {
     state.theme = document.body.classList.contains("light") ? "dark" : "light";
-    localStorage.setItem("oc:theme", state.theme);
+    writeStorage("oc:theme", state.theme);
     applyTheme();
   });
 
@@ -667,8 +896,8 @@ function initEvents() {
 
   $("#save-quote").addEventListener("click", () => {
     const quote = quoteLibrary[state.quoteIndex % quoteLibrary.length];
-    const saved = JSON.parse(localStorage.getItem("oc:savedQuotes") || "[]");
-    localStorage.setItem("oc:savedQuotes", JSON.stringify([...saved, quote]));
+    const saved = JSON.parse(readStorage("oc:savedQuotes", "[]"));
+    writeStorage("oc:savedQuotes", JSON.stringify([...saved, quote]));
   });
 
   $("#share-quote").addEventListener("click", async () => {
@@ -682,7 +911,7 @@ function initEvents() {
   });
 
   $("#bookmark-reading").addEventListener("click", () => {
-    localStorage.setItem("oc:bookmarkedReading", JSON.stringify(readings));
+    writeStorage("oc:bookmarkedReading", JSON.stringify(readings));
   });
 
   $("#speak-reading").addEventListener("click", () => {
@@ -693,8 +922,8 @@ function initEvents() {
   $("#mark-reading").addEventListener("click", () => {
     const plan = readingPlans[state.plan];
     const key = `oc:reading:${state.plan}`;
-    const current = Number(localStorage.getItem(key) || "0");
-    localStorage.setItem(key, String(Math.min(plan.total, current + 1)));
+    const current = Number(readStorage(key, "0"));
+    writeStorage(key, String(Math.min(plan.total, current + 1)));
     renderReadingsView();
     renderMetrics();
   });
@@ -702,13 +931,13 @@ function initEvents() {
   $$("[data-plan]").forEach((button) => {
     button.addEventListener("click", () => {
       state.plan = button.dataset.plan;
-      localStorage.setItem("oc:plan", state.plan);
+      writeStorage("oc:plan", state.plan);
       renderReadingsView();
     });
   });
 
   $("#reading-note").addEventListener("input", (event) => {
-    localStorage.setItem("oc:readingNote", event.target.value);
+    writeStorage("oc:readingNote", event.target.value);
   });
 
   $$("[data-language]").forEach((button) => {
@@ -745,13 +974,11 @@ function initEvents() {
   });
 
   $("#use-location").addEventListener("click", () => {
-    if (!navigator.geolocation) return;
-    navigator.geolocation.getCurrentPosition((position) => {
-      const sorted = churches
-        .map((church) => ({ ...church, distance: distanceKm(position.coords.latitude, position.coords.longitude, church.lat, church.lng) }))
-        .sort((a, b) => a.distance - b.distance);
-      renderChurches(sorted);
-    });
+    if (consentAllows("location")) {
+      requestChurchLocation();
+    } else {
+      openLocationModal();
+    }
   });
 
   $("#prayer-form").addEventListener("submit", (event) => {
@@ -766,7 +993,7 @@ function initEvents() {
       count: 0,
       pending: true,
     });
-    localStorage.setItem("oc:prayers", JSON.stringify(prayers));
+    writeStorage("oc:prayers", JSON.stringify(prayers));
     event.target.reset();
     $("#prayer-anonymous").checked = true;
     renderPrayers();
@@ -777,10 +1004,10 @@ function initEvents() {
     event.preventDefault();
     const question = $("#assistant-input").value.trim();
     if (!question) return;
-    const history = JSON.parse(localStorage.getItem("oc:chat") || "[]");
+    const history = JSON.parse(readStorage("oc:chat", "[]"));
     history.push({ role: "user", text: question });
     history.push({ role: "assistant", text: answerQuestion(question) });
-    localStorage.setItem("oc:chat", JSON.stringify(history.slice(-16)));
+    writeStorage("oc:chat", JSON.stringify(history.slice(-16)));
     $("#assistant-input").value = "";
     renderAssistant();
   });
@@ -801,6 +1028,46 @@ function initEvents() {
       state.calendarMode = button.dataset.calendarMode;
       renderCalendar();
     });
+  });
+
+  $("#consent-accept").addEventListener("click", () => {
+    applyConsentChoice({ preferences: true, location: true, analytics: true });
+  });
+
+  $("#consent-reject").addEventListener("click", () => {
+    applyConsentChoice({ preferences: false, location: false, analytics: false });
+  });
+
+  $("#consent-customize").addEventListener("click", openConsentModal);
+  $("#open-consent-settings").addEventListener("click", openConsentModal);
+  $("#footer-consent-settings").addEventListener("click", openConsentModal);
+  $("#close-consent-modal").addEventListener("click", closeConsentModal);
+
+  $("#consent-save").addEventListener("click", () => {
+    applyConsentChoice({
+      preferences: $("#consent-preferences").checked,
+      location: $("#consent-location").checked,
+      analytics: $("#consent-analytics").checked,
+    });
+  });
+
+  $("#consent-save-essential").addEventListener("click", () => {
+    applyConsentChoice({ preferences: false, location: false, analytics: false });
+  });
+
+  $("#clear-local-data").addEventListener("click", clearLocalAppData);
+  $("#reset-consent").addEventListener("click", resetConsent);
+
+  $("#close-location-modal").addEventListener("click", closeLocationModal);
+  $("#deny-location").addEventListener("click", () => {
+    closeLocationModal();
+    renderLocationStatus("Location was not enabled. Manual church search still works.");
+  });
+  $("#allow-location").addEventListener("click", () => {
+    const consent = getConsent();
+    applyConsentChoice({ ...consent, location: true });
+    closeLocationModal();
+    requestChurchLocation();
   });
 }
 
@@ -833,7 +1100,12 @@ function renderGlobalSearch() {
   const results = haystack.filter((item) => `${item.title} ${item.meta} ${item.detail}`.toLowerCase().includes(query)).slice(0, 8);
   box.hidden = false;
   box.innerHTML = results.length
-    ? results.map((item) => `<a class="result-item" href="${item.href}"><h4>${item.title}</h4><p>${item.meta}</p><p>${item.detail}</p></a>`).join("")
+    ? results
+        .map(
+          (item) =>
+            `<a class="result-item" href="${item.href}"><h4>${escapeHtml(item.title)}</h4><p>${escapeHtml(item.meta)}</p><p>${escapeHtml(item.detail)}</p></a>`,
+        )
+        .join("")
     : `<div class="result-item"><h4>No results</h4><p>Try a feast, saint, church, topic, or reading.</p></div>`;
 }
 
@@ -860,5 +1132,6 @@ function registerServiceWorker() {
 
 applyTheme();
 initEvents();
+renderConsentBanner();
 renderAll();
 registerServiceWorker();

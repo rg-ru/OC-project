@@ -39,3 +39,11 @@ Planned roles:
 - Deletion workflow removes or anonymizes user-owned records.
 - Analytics events avoid sensitive religious notes and prayer text.
 - Data retention windows are documented per collection.
+
+## Web Prototype Consent
+
+- The static web release displays a first-party consent banner for cookies and local storage.
+- Optional location use for Church Finder is gated behind an in-app consent notice and then the browser geolocation permission prompt.
+- Coordinates are used in memory only to sort sample churches by approximate distance and are not stored or sent to a backend.
+- The legal center includes Privacy, Cookie and Local Storage, Terms, and Imprint scaffolds.
+- Production launch requires real operator details, processor disclosures, retention schedules, export/deletion workflows, and legal review.

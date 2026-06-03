@@ -15,6 +15,7 @@ const requiredFiles = [
   "docs/api-design.md",
   "docs/testing-and-release.md",
   "docs/security-and-compliance.md",
+  "docs/legal-compliance.md",
 ];
 
 const requiredSections = [
@@ -26,6 +27,7 @@ const requiredSections = [
   "community",
   "assistant",
   "admin",
+  "legal",
 ];
 
 const failures = [];
@@ -44,9 +46,24 @@ for (const section of requiredSections) {
 }
 
 const script = fs.readFileSync(path.join(root, "script.js"), "utf8");
-for (const feature of ["fastRuleForDate", "renderCalendar", "renderAssistant", "renderPrayers", "renderGlobalSearch"]) {
+for (const feature of [
+  "fastRuleForDate",
+  "renderCalendar",
+  "renderAssistant",
+  "renderPrayers",
+  "renderGlobalSearch",
+  "renderConsentBanner",
+  "requestChurchLocation",
+  "escapeHtml",
+]) {
   if (!script.includes(`function ${feature}`)) {
     failures.push(`Missing ${feature} implementation`);
+  }
+}
+
+for (const marker of ["consent-banner", "location-modal", "privacy-policy", "cookie-policy", "imprint"]) {
+  if (!html.includes(marker)) {
+    failures.push(`Missing legal/consent marker ${marker}`);
   }
 }
 

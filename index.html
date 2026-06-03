@@ -40,6 +40,7 @@
           <a href="#community" class="nav-link">Prayer</a>
           <a href="#assistant" class="nav-link">Assistant</a>
           <a href="#admin" class="nav-link">Admin</a>
+          <a href="#legal" class="nav-link">Legal</a>
         </nav>
 
         <div class="rail-panel">
@@ -247,7 +248,7 @@
               <p class="eyebrow">Library</p>
               <h2>Icons, Sermons, Chants, and Church Finder</h2>
             </div>
-            <button class="text-button" id="use-location" type="button">Use Location</button>
+            <button class="text-button" id="use-location" type="button">Find Near Me</button>
           </div>
           <div class="content-grid library-layout">
             <article class="panel">
@@ -271,6 +272,7 @@
                 <span class="map-pin three"></span>
               </div>
               <input class="field" id="church-search" type="search" placeholder="Search churches or jurisdictions" />
+              <p id="location-status" class="location-status">Location is off. Search manually or allow location to sort churches by distance.</p>
               <div id="church-list" class="result-list"></div>
             </article>
           </div>
@@ -349,7 +351,155 @@
             </article>
           </div>
         </section>
+
+        <section id="legal" class="view-section">
+          <div class="section-heading wide">
+            <div>
+              <p class="eyebrow">Legal Center</p>
+              <h2>Privacy, Cookies, Terms, and Imprint</h2>
+            </div>
+            <button class="text-button" id="open-consent-settings" type="button">Cookie Settings</button>
+          </div>
+
+          <div class="content-grid legal-layout">
+            <article class="panel legal-panel" id="privacy-policy">
+              <h3>Privacy Policy</h3>
+              <p><strong>Controller:</strong> Orthodox Companion / rg-ru OC-project. This is a public prototype hosted on GitHub Pages. Replace this line with the full legal name, postal address, and contact email of the operator before a commercial or public launch beyond this prototype.</p>
+              <p><strong>Purpose:</strong> The site provides an Orthodox Christian companion experience: fasting calendar, readings, study progress, prayer wall preview, church finder, and source-backed assistant prototype.</p>
+              <p><strong>Data processed in this web release:</strong> app settings, consent choices, theme, jurisdiction, bookmarks, local reading progress, local notes, local prayer preview entries, local chat history, and optional browser geolocation for church sorting.</p>
+              <p><strong>Location:</strong> Location is requested only after the user clicks Find Near Me, accepts the in-app location notice, and grants the browser permission. Coordinates are used once in the browser to sort sample churches by distance. Coordinates are not stored, not sent to a backend, and not shared by this static site.</p>
+              <p><strong>Legal basis:</strong> essential local storage is used to provide features requested by the user. Optional location is based on consent. Future analytics, marketing, community accounts, Firebase sync, or AI backend processing must remain off until a specific consent and production privacy notice are in place.</p>
+              <p><strong>Storage period:</strong> local app data remains in the user's browser until the user clears browser storage or uses the controls in this app. Consent choices are remembered for 180 days unless changed earlier.</p>
+              <p><strong>User rights:</strong> where GDPR applies, users may request access, rectification, erasure, restriction, portability, objection, and withdrawal of consent. For this static prototype, most data is stored only in the user's own browser and can be deleted locally.</p>
+              <p><strong>Important:</strong> Prayer requests, assistant messages, notes, and religious preferences can be sensitive. The production app must add stronger account security, moderation, clergy/source review, export/deletion flows, and a reviewed legal notice before collecting this data on a server.</p>
+            </article>
+
+            <article class="panel legal-panel" id="cookie-policy">
+              <h3>Cookie and Local Storage Policy</h3>
+              <p>This site uses first-party cookies and browser local storage. It does not use advertising cookies, third-party analytics, or cross-site tracking in this release.</p>
+              <div class="legal-table" role="table" aria-label="Storage overview">
+                <div role="row">
+                  <strong role="cell">Necessary</strong>
+                  <span role="cell">Consent record, app shell, PWA cache, and feature state needed to deliver user-requested functions.</span>
+                </div>
+                <div role="row">
+                  <strong role="cell">Preferences</strong>
+                  <span role="cell">Theme, jurisdiction, progress, bookmarks, notes, and local-only personalization.</span>
+                </div>
+                <div role="row">
+                  <strong role="cell">Location</strong>
+                  <span role="cell">A consent flag for the Find Near Me feature. Exact coordinates are not persisted.</span>
+                </div>
+                <div role="row">
+                  <strong role="cell">Analytics</strong>
+                  <span role="cell">Reserved for a future privacy-preserving analytics setup. Disabled now.</span>
+                </div>
+              </div>
+              <p>Optional choices can be changed at any time through Cookie Settings. Essential storage cannot be disabled because the site needs it to remember the consent decision and provide requested app functions.</p>
+              <div class="button-row">
+                <button class="text-button" id="clear-local-data" type="button">Clear Local App Data</button>
+                <button class="text-button" id="reset-consent" type="button">Reset Consent</button>
+              </div>
+            </article>
+
+            <article class="panel legal-panel" id="terms">
+              <h3>Terms of Use</h3>
+              <p>Orthodox Companion is an educational and devotional software prototype. It is not a substitute for pastoral guidance, confession, medical advice, legal advice, emergency services, or direct communication with a parish.</p>
+              <p>Calendar, fasting, readings, and church data may vary by jurisdiction and parish. Users should confirm fasting rules, services, pastoral questions, and sacramental matters with their priest or parish.</p>
+              <p>The assistant prototype must answer only from approved Orthodox sources in production and should refuse unsupported claims. Its current responses are illustrative and not authoritative.</p>
+              <p>Users must not submit unlawful, abusive, defamatory, private, or sensitive information about others. Community prayer features require moderation before production launch.</p>
+            </article>
+
+            <article class="panel legal-panel" id="imprint">
+              <h3>Imprint / Legal Notice</h3>
+              <p><strong>Project:</strong> Orthodox Companion</p>
+              <p><strong>Repository owner:</strong> rg-ru</p>
+              <p><strong>Hosting:</strong> GitHub Pages, GitHub, Inc.</p>
+              <p><strong>Contact:</strong> Use the public GitHub repository contact path until a formal operator email and postal address are added.</p>
+              <p><strong>Production requirement:</strong> Before public commercial release, add the legally responsible person or entity, postal address, contact email, VAT/business details if applicable, supervisory details if applicable, and country-specific mandatory notices.</p>
+              <p><strong>Liability note:</strong> This legal center is an implementation scaffold for transparency and consent UX, not legal advice. Have it reviewed by qualified counsel before relying on it for production.</p>
+            </article>
+          </div>
+        </section>
+
+        <footer class="site-footer">
+          <span>Orthodox Companion</span>
+          <a href="#privacy-policy">Privacy</a>
+          <a href="#cookie-policy">Cookies</a>
+          <a href="#terms">Terms</a>
+          <a href="#imprint">Imprint</a>
+          <button class="link-button" id="footer-consent-settings" type="button">Cookie Settings</button>
+        </footer>
       </main>
+    </div>
+
+    <section id="consent-banner" class="consent-banner" role="dialog" aria-labelledby="consent-title" aria-describedby="consent-description" hidden>
+      <div>
+        <p class="eyebrow">Privacy Choices</p>
+        <h2 id="consent-title">Cookies and local storage</h2>
+        <p id="consent-description">We use essential first-party storage for the app to work. Optional choices control preferences, future analytics, and location-assisted church sorting. No advertising cookies are used.</p>
+      </div>
+      <div class="button-row consent-actions">
+        <button class="text-button" id="consent-reject" type="button">Essential Only</button>
+        <button class="text-button" id="consent-customize" type="button">Customize</button>
+        <button class="primary-action compact" id="consent-accept" type="button">Accept All</button>
+      </div>
+    </section>
+
+    <div id="consent-modal" class="modal-backdrop" hidden>
+      <section class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="consent-modal-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Consent Preferences</p>
+            <h2 id="consent-modal-title">Manage privacy choices</h2>
+          </div>
+          <button class="icon-button" id="close-consent-modal" type="button" aria-label="Close consent settings">
+            <svg viewBox="0 0 24 24" role="img"><path d="M6 6l12 12M18 6 6 18" /></svg>
+          </button>
+        </div>
+        <div class="consent-options">
+          <label class="consent-option">
+            <input type="checkbox" checked disabled />
+            <span><strong>Necessary storage</strong><small>Consent record, app shell, PWA cache, and requested app functions.</small></span>
+          </label>
+          <label class="consent-option">
+            <input id="consent-preferences" type="checkbox" />
+            <span><strong>Preferences</strong><small>Remember theme, jurisdiction, progress, bookmarks, notes, and local personalization.</small></span>
+          </label>
+          <label class="consent-option">
+            <input id="consent-location" type="checkbox" />
+            <span><strong>Location-assisted Church Finder</strong><small>Allow the app to ask your browser for location when you click Find Near Me. Coordinates are used once and not stored.</small></span>
+          </label>
+          <label class="consent-option">
+            <input id="consent-analytics" type="checkbox" />
+            <span><strong>Analytics</strong><small>Reserved for future privacy-friendly analytics. No analytics runs in this release.</small></span>
+          </label>
+        </div>
+        <div class="button-row consent-actions">
+          <button class="text-button" id="consent-save-essential" type="button">Save Essential Only</button>
+          <button class="primary-action compact" id="consent-save" type="button">Save Choices</button>
+        </div>
+      </section>
+    </div>
+
+    <div id="location-modal" class="modal-backdrop" hidden>
+      <section class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="location-modal-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Church Finder</p>
+            <h2 id="location-modal-title">Allow location for nearby churches?</h2>
+          </div>
+          <button class="icon-button" id="close-location-modal" type="button" aria-label="Close location request">
+            <svg viewBox="0 0 24 24" role="img"><path d="M6 6l12 12M18 6 6 18" /></svg>
+          </button>
+        </div>
+        <p>The app will ask your browser for your approximate location and use it once, in this page, to sort Orthodox church results by distance. Your coordinates are not stored, not sent to a server, and not shared by this static site.</p>
+        <p>You can change this consent later in Cookie Settings. Your browser may also require a separate permission prompt.</p>
+        <div class="button-row consent-actions">
+          <button class="text-button" id="deny-location" type="button">Not Now</button>
+          <button class="primary-action compact" id="allow-location" type="button">Allow and Continue</button>
+        </div>
+      </section>
     </div>
 
     <script src="script.js" defer></script>

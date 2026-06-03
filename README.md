@@ -48,7 +48,13 @@ Then open `http://localhost:4173`.
 - Prayer request wall with anonymous requests, prayer counters, and moderation queue surface.
 - Source-backed AI Orthodox Assistant prototype with approved-source model.
 - Admin dashboard surfaces for content, moderation, and API health.
-- PWA manifest, service worker cache, responsive dark/light design, and GitHub Pages CI/CD.
+- Cookie/local-storage consent, separate location consent for Church Finder, legal center, local data deletion, PWA manifest, service worker cache, responsive dark/light design, and GitHub Pages CI/CD.
+
+## Legal and Privacy
+
+The web app includes an in-page Privacy Policy, Cookie and Local Storage Policy, Terms of Use, and Imprint / Legal Notice. It also includes explicit consent UX for optional location-assisted church sorting.
+
+This is a prototype legal scaffold. Before a real public or commercial launch, replace the placeholder operator/contact details and have the legal text reviewed for the actual entity, hosting setup, Firebase backend, AI processing, analytics, moderation, app stores, and jurisdictions served.
 
 ## Product Roadmap
 
