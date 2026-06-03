@@ -1,0 +1,13 @@
+{
+  "name": "orthodox-companion-web",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Web-first Orthodox Companion PWA.",
+  "scripts": {
+    "start": "python3 -m http.server 4173",
+    "test": "node scripts/validate-site.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

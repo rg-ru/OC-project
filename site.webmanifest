@@ -1,0 +1,17 @@
+{
+  "name": "Orthodox Companion",
+  "short_name": "Orthodox",
+  "description": "A reverent Orthodox Christian web companion for fasting, readings, feasts, study, prayer, and source-backed guidance.",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#11100e",
+  "theme_color": "#16120d",
+  "icons": [
+    {
+      "src": "assets/byzantine-hero.png",
+      "sizes": "1536x1024",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

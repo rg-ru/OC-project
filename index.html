@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Orthodox Companion is a web-first Orthodox Christian companion with fasting, readings, feast countdowns, study tools, quotes, prayer requests, and source-backed guidance."
+    />
+    <meta name="theme-color" content="#16120d" />
+    <title>Orthodox Companion</title>
+    <link rel="manifest" href="site.webmanifest" />
+    <link rel="icon" href="assets/byzantine-hero.png" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <div class="app-shell">
+      <aside class="side-rail" aria-label="Primary">
+        <a class="brand" href="#overview" aria-label="Orthodox Companion home">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 48 48" role="img">
+              <path d="M24 5l3.5 9h9.5l-7.6 5.7 2.9 9.3L24 23.5 15.7 29l2.9-9.3L11 14h9.5L24 5z" />
+              <path d="M24 16v23M15 23h18M18 31h12" />
+            </svg>
+          </span>
+          <span>
+            <strong>Orthodox Companion</strong>
+            <small>Eastern Orthodox web app</small>
+          </span>
+        </a>
+
+        <nav class="nav-list" aria-label="Sections">
+          <a href="#overview" class="nav-link active">Today</a>
+          <a href="#calendar" class="nav-link">Calendar</a>
+          <a href="#readings" class="nav-link">Readings</a>
+          <a href="#study" class="nav-link">Study</a>
+          <a href="#library" class="nav-link">Library</a>
+          <a href="#community" class="nav-link">Prayer</a>
+          <a href="#assistant" class="nav-link">Assistant</a>
+          <a href="#admin" class="nav-link">Admin</a>
+        </nav>
+
+        <div class="rail-panel">
+          <p class="eyebrow">Next Feast</p>
+          <strong id="rail-feast">Loading</strong>
+          <span id="rail-countdown">Calculating</span>
+        </div>
+      </aside>
+
+      <main id="main" class="main-content">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow" id="today-label">Today</p>
+            <h1>Orthodox Companion</h1>
+          </div>
+          <div class="topbar-actions">
+            <label class="search-box" for="global-search">
+              <span aria-hidden="true">
+                <svg viewBox="0 0 24 24" role="img"><circle cx="11" cy="11" r="7" /><path d="M16.5 16.5 21 21" /></svg>
+              </span>
+              <input id="global-search" type="search" placeholder="Search feasts, saints, prayers, lessons" autocomplete="off" />
+            </label>
+            <select id="jurisdiction-select" aria-label="Jurisdiction">
+              <option value="antiochian">Antiochian</option>
+              <option value="greek">Greek</option>
+              <option value="oca">OCA</option>
+              <option value="romanian">Romanian</option>
+              <option value="russian">Russian</option>
+              <option value="serbian">Serbian</option>
+            </select>
+            <button class="icon-button" id="theme-toggle" type="button" aria-label="Toggle light and dark theme">
+              <svg viewBox="0 0 24 24" role="img"><path d="M12 3v2M12 19v2M5.6 5.6 7 7M17 17l1.4 1.4M3 12h2M19 12h2M5.6 18.4 7 17M17 7l1.4-1.4" /><circle cx="12" cy="12" r="4" /></svg>
+            </button>
+          </div>
+        </header>
+
+        <section id="search-results" class="search-results" hidden aria-live="polite"></section>
+
+        <section id="overview" class="view-section">
+          <div class="hero-panel">
+            <div class="hero-copy">
+              <p class="eyebrow">Daily Orthodox rhythm</p>
+              <h2 id="hero-date">Today</h2>
+              <p id="hero-summary">Loading calendar, fasting, readings, and feast data.</p>
+              <div class="hero-actions">
+                <a class="primary-action" href="#calendar">Open Calendar</a>
+                <a class="secondary-action" href="#assistant">Ask Assistant</a>
+              </div>
+            </div>
+            <div class="daily-rule" aria-live="polite">
+              <span class="rule-label">Fasting Rule</span>
+              <strong id="fasting-title">Loading</strong>
+              <p id="fasting-detail">Loading</p>
+              <div id="allowed-foods" class="pill-row"></div>
+            </div>
+          </div>
+
+          <div class="metric-grid">
+            <article class="metric-card">
+              <span class="metric-kicker">Feast Countdown</span>
+              <strong id="countdown-number">--</strong>
+              <p id="countdown-label">Loading next feast</p>
+            </article>
+            <article class="metric-card">
+              <span class="metric-kicker">Study Progress</span>
+              <strong id="study-progress">0%</strong>
+              <p>Catechism, history, Scripture, and languages</p>
+            </article>
+            <article class="metric-card">
+              <span class="metric-kicker">Prayer Wall</span>
+              <strong id="prayer-count">0</strong>
+              <p>Prayer commitments recorded locally</p>
+            </article>
+            <article class="metric-card">
+              <span class="metric-kicker">Reading Plan</span>
+              <strong id="reading-progress">0%</strong>
+              <p id="reading-plan-label">New Testament in 90 days</p>
+            </article>
+          </div>
+
+          <div class="content-grid two-column">
+            <article class="panel daily-reading">
+              <div class="section-heading">
+                <div>
+                  <p class="eyebrow">Daily Readings</p>
+                  <h3>Epistle and Gospel</h3>
+                </div>
+                <button class="text-button" id="bookmark-reading" type="button">Bookmark</button>
+              </div>
+              <div id="daily-readings"></div>
+            </article>
+
+            <article class="panel quote-panel">
+              <div class="section-heading">
+                <div>
+                  <p class="eyebrow">Quote Generator</p>
+                  <h3>Daily Wisdom</h3>
+                </div>
+                <div class="button-row">
+                  <button class="icon-button" id="new-quote" type="button" aria-label="Show another quote">
+                    <svg viewBox="0 0 24 24" role="img"><path d="M20 12a8 8 0 1 1-2.3-5.7M20 4v6h-6" /></svg>
+                  </button>
+                  <button class="icon-button" id="save-quote" type="button" aria-label="Save quote">
+                    <svg viewBox="0 0 24 24" role="img"><path d="M19 21 12 17 5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" /></svg>
+                  </button>
+                  <button class="icon-button" id="share-quote" type="button" aria-label="Share quote">
+                    <svg viewBox="0 0 24 24" role="img"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7M16 6l-4-4-4 4M12 2v14" /></svg>
+                  </button>
+                </div>
+              </div>
+              <blockquote id="quote-text">Loading quote</blockquote>
+              <p id="quote-source" class="source-line"></p>
+            </article>
+          </div>
+        </section>
+
+        <section id="calendar" class="view-section">
+          <div class="section-heading wide">
+            <div>
+              <p class="eyebrow">Orthodox Fasting Calendar</p>
+              <h2>Calendar and Daily Rule</h2>
+            </div>
+            <div class="segmented-control" role="tablist" aria-label="Calendar range">
+              <button type="button" class="active" data-calendar-mode="month">Month</button>
+              <button type="button" data-calendar-mode="fasts">Fasts</button>
+            </div>
+          </div>
+          <div class="content-grid calendar-layout">
+            <article class="panel">
+              <div id="calendar-grid" class="calendar-grid" aria-live="polite"></div>
+            </article>
+            <aside class="panel">
+              <h3 id="selected-day-title">Selected Day</h3>
+              <p id="selected-day-detail"></p>
+              <div id="selected-day-foods" class="pill-row"></div>
+              <div id="fast-periods" class="period-list"></div>
+            </aside>
+          </div>
+        </section>
+
+        <section id="readings" class="view-section">
+          <div class="section-heading wide">
+            <div>
+              <p class="eyebrow">Daily Gospel Readings</p>
+              <h2>Readings, Bookmarks, and Bible Plan</h2>
+            </div>
+            <button class="text-button" id="speak-reading" type="button">Play Audio</button>
+          </div>
+          <div class="content-grid two-column">
+            <article class="panel">
+              <h3>Liturgical Readings</h3>
+              <div id="readings-full"></div>
+            </article>
+            <article class="panel">
+              <h3>Bible Reading Tracker</h3>
+              <div class="progress-track"><span id="reading-bar"></span></div>
+              <p id="reading-status"></p>
+              <div class="button-row wrap">
+                <button class="text-button" type="button" data-plan="new-testament">New Testament 90</button>
+                <button class="text-button" type="button" data-plan="psalms">Psalms 30</button>
+                <button class="text-button" type="button" data-plan="gospels">Gospels 40</button>
+              </div>
+              <button class="primary-action compact" id="mark-reading" type="button">Mark Today Complete</button>
+              <textarea id="reading-note" placeholder="Private note"></textarea>
+            </article>
+          </div>
+        </section>
+
+        <section id="study" class="view-section">
+          <div class="section-heading wide">
+            <div>
+              <p class="eyebrow">Orthodox Study Center</p>
+              <h2>Lessons, Quizzes, and Languages</h2>
+            </div>
+            <span class="status-chip" id="achievement-chip">Beginner</span>
+          </div>
+          <div class="content-grid three-column">
+            <article class="panel lesson-list">
+              <h3>Catechism Lessons</h3>
+              <div id="lesson-list"></div>
+            </article>
+            <article class="panel quiz-card">
+              <h3>Interactive Quiz</h3>
+              <div id="quiz-area"></div>
+            </article>
+            <article class="panel language-card">
+              <h3>Orthodox Language Learning</h3>
+              <div class="segmented-control small" role="tablist" aria-label="Language">
+                <button type="button" class="active" data-language="greek">Greek</button>
+                <button type="button" data-language="slavonic">Slavonic</button>
+              </div>
+              <div id="flashcard" class="flashcard"></div>
+              <div class="button-row">
+                <button class="text-button" id="flip-card" type="button">Flip</button>
+                <button class="text-button" id="next-card" type="button">Next</button>
+                <button class="text-button" id="speak-card" type="button">Pronounce</button>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section id="library" class="view-section">
+          <div class="section-heading wide">
+            <div>
+              <p class="eyebrow">Library</p>
+              <h2>Icons, Sermons, Chants, and Church Finder</h2>
+            </div>
+            <button class="text-button" id="use-location" type="button">Use Location</button>
+          </div>
+          <div class="content-grid library-layout">
+            <article class="panel">
+              <h3>Orthodox Icon Encyclopedia</h3>
+              <input class="field" id="icon-search" type="search" placeholder="Search icons, saints, feasts" />
+              <div id="icon-results" class="result-list"></div>
+            </article>
+            <article class="panel">
+              <h3>Sermon Library</h3>
+              <div id="sermon-list" class="result-list"></div>
+            </article>
+            <article class="panel">
+              <h3>Orthodox Chant Library</h3>
+              <div id="chant-list" class="result-list"></div>
+            </article>
+            <article class="panel map-panel">
+              <h3>Church Finder</h3>
+              <div class="map-visual" id="map-visual" aria-label="Map preview">
+                <span class="map-pin one"></span>
+                <span class="map-pin two"></span>
+                <span class="map-pin three"></span>
+              </div>
+              <input class="field" id="church-search" type="search" placeholder="Search churches or jurisdictions" />
+              <div id="church-list" class="result-list"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="community" class="view-section">
+          <div class="section-heading wide">
+            <div>
+              <p class="eyebrow">Prayer Requests</p>
+              <h2>Community Prayer Wall</h2>
+            </div>
+            <span class="status-chip">Local moderation queue</span>
+          </div>
+          <div class="content-grid two-column">
+            <form id="prayer-form" class="panel form-panel">
+              <label for="prayer-name">Name</label>
+              <input id="prayer-name" class="field" type="text" placeholder="Anonymous" maxlength="40" />
+              <label for="prayer-text">Request</label>
+              <textarea id="prayer-text" required maxlength="240" placeholder="For health, peace, repentance, or thanksgiving"></textarea>
+              <label class="checkbox-row">
+                <input id="prayer-anonymous" type="checkbox" checked />
+                <span>Post anonymously</span>
+              </label>
+              <button class="primary-action compact" type="submit">Submit Request</button>
+            </form>
+            <article class="panel">
+              <h3>Prayer Wall</h3>
+              <div id="prayer-wall" class="result-list"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="assistant" class="view-section">
+          <div class="section-heading wide">
+            <div>
+              <p class="eyebrow">AI Orthodox Assistant</p>
+              <h2>Source-Backed Q&amp;A</h2>
+            </div>
+            <span class="status-chip">Citations required</span>
+          </div>
+          <div class="assistant-layout">
+            <article class="panel assistant-card">
+              <div id="chat-log" class="chat-log" aria-live="polite"></div>
+              <form id="assistant-form" class="assistant-form">
+                <input id="assistant-input" class="field" type="text" placeholder="Ask about fasting, prayer, feasts, or Scripture" />
+                <button class="primary-action compact" type="submit">Ask</button>
+              </form>
+            </article>
+            <aside class="panel source-card">
+              <h3>Approved Source Library</h3>
+              <div id="source-list" class="result-list"></div>
+            </aside>
+          </div>
+        </section>
+
+        <section id="admin" class="view-section">
+          <div class="section-heading wide">
+            <div>
+              <p class="eyebrow">Admin Dashboard</p>
+              <h2>Content, Moderation, and API Health</h2>
+            </div>
+            <span class="status-chip">Role-based access</span>
+          </div>
+          <div class="content-grid three-column">
+            <article class="panel">
+              <h3>Content Queue</h3>
+              <div id="content-queue" class="result-list"></div>
+            </article>
+            <article class="panel">
+              <h3>Moderation</h3>
+              <div id="moderation-queue" class="result-list"></div>
+            </article>
+            <article class="panel">
+              <h3>Liturgical API</h3>
+              <div id="api-health" class="result-list"></div>
+            </article>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="script.js" defer></script>
+  </body>
+</html>
