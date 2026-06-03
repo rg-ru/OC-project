@@ -1,6 +1,10 @@
 # Orthodox Companion Web
 
-Orthodox Companion is a web-first Progressive Web App for Eastern Orthodox Christian daily life. This first production-ready website includes a responsive app shell, offline support, fasting calendar logic, feast countdowns, daily readings, quote generation, study progress, prayer requests, a church finder, library surfaces, a source-backed assistant prototype, admin surfaces, and GitHub Pages deployment automation.
+Orthodox Companion is a web-first Progressive Web App for Eastern Orthodox Christian daily life. This first release turns the product brief into a hosted website with a responsive app shell, offline support, fasting calendar logic, feast countdowns, daily readings, quote generation, study progress, prayer requests, a church finder, library surfaces, a source-backed assistant prototype, admin surfaces, and GitHub Pages deployment automation.
+
+## Live Site
+
+This repository is configured for GitHub Pages through `.github/workflows/pages.yml`. After the `main` branch is pushed, enable Pages with `Settings -> Pages -> Source: GitHub Actions`.
 
 ## Run Locally
 
@@ -33,15 +37,48 @@ Then open `http://localhost:4173`.
 └── sw.js
 ```
 
-## Deploy to GitHub Pages
+## Implemented in This Web Release
 
-1. Create a GitHub repository named `orthodox-companion`.
-2. Push this folder to the repository's `main` branch.
-3. In GitHub, open `Settings -> Pages`.
-4. Set the source to `GitHub Actions`.
-5. Run the `Deploy to GitHub Pages` workflow if it does not run automatically.
+- Orthodox fasting calendar with jurisdiction selector, allowed foods, calendar view, daily view, feast and fast highlighting.
+- Feast countdown for major feasts.
+- Orthodox quote generator with save/share actions.
+- Daily Epistle and Gospel preview with bookmark and audio controls.
+- Orthodox Study Center with lessons, quiz interactions, language flashcards, and local progress.
+- Icon encyclopedia, sermon library, chant library, and church finder surface.
+- Prayer request wall with anonymous requests, prayer counters, and moderation queue surface.
+- Source-backed AI Orthodox Assistant prototype with approved-source model.
+- Admin dashboard surfaces for content, moderation, and API health.
+- PWA manifest, service worker cache, responsive dark/light design, and GitHub Pages CI/CD.
 
-The workflow validates the site and deploys the static PWA.
+## Product Roadmap
+
+The broader Orthodox Companion mission is to become a complete iOS, Android, and Web app using Flutter, Material 3, Riverpod, and Firebase.
+
+Planned core modules:
+
+1. Orthodox Fasting Calendar
+2. Feast Day Countdown
+3. Orthodox Quote Generator
+4. Church Finder
+5. Orthodox Study Center
+6. Daily Gospel Readings
+7. Orthodox Icon Encyclopedia
+8. Bible Reading Tracker
+9. Prayer Requests
+10. Orthodox Language Learning
+11. AI Orthodox Assistant
+12. Sermon Library
+13. Liturgical Calendar API
+14. Orthodox Chant Library
+15. Interactive Church History Timeline
+
+Planned platform capabilities:
+
+- User accounts, cloud sync, push notifications, offline mode, global search, analytics, user profiles, admin dashboard, and dark/light themes.
+- Multilingual support for English, German, Russian, Greek, Serbian, and Romanian.
+- Firebase Authentication, Firestore, Cloud Functions, Cloud Storage, and Firebase Messaging.
+- RAG architecture with a vector database, approved Orthodox source library, and source citation system.
+- Role-based permissions, content moderation, rate limiting, and GDPR compliance.
 
 ## Future Flutter and Firebase Track
 
