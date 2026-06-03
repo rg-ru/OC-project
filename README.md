@@ -4,6 +4,8 @@ Orthodox Companion is a web-first Progressive Web App for Eastern Orthodox Chris
 
 ## Live Site
 
+Open the hosted app here: [https://rg-ru.github.io/OC-project/](https://rg-ru.github.io/OC-project/)
+
 This repository is configured for GitHub Pages through `.github/workflows/pages.yml`. After the `main` branch is pushed, enable Pages with `Settings -> Pages -> Source: GitHub Actions`.
 
 ## Run Locally
