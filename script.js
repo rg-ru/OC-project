@@ -76,6 +76,8 @@ function consentAllows(category) {
 }
 
 const PERSONALIZATION_DEFAULTS = {
+  appLanguage: "en",
+  simpleMode: "off",
   theme: "dark",
   accent: "gold",
   textScale: "standard",
@@ -85,6 +87,8 @@ const PERSONALIZATION_DEFAULTS = {
 };
 
 const PERSONALIZATION_STORAGE_KEYS = {
+  appLanguage: "oc:appLanguage",
+  simpleMode: "oc:simpleMode",
   theme: "oc:theme",
   accent: "oc:accent",
   textScale: "oc:textScale",
@@ -94,6 +98,8 @@ const PERSONALIZATION_STORAGE_KEYS = {
 };
 
 const PERSONALIZATION_OPTIONS = {
+  appLanguage: ["en", "de", "ru", "el", "sr", "ro"],
+  simpleMode: ["off", "on"],
   theme: ["dark", "light", "system"],
   accent: ["gold", "green", "blue", "ruby", "violet", "parchment"],
   textScale: ["standard", "large", "xl"],
@@ -133,6 +139,298 @@ const PERSONALIZATION_COPY = {
   },
 };
 
+const SIMPLE_MODE_DEFAULTS = {
+  textScale: "large",
+  density: "spacious",
+  background: "minimal",
+  motion: "reduced",
+};
+
+const APP_LANGUAGE_LOCALES = {
+  en: "en",
+  de: "de-DE",
+  ru: "ru-RU",
+  el: "el-GR",
+  sr: "sr-Cyrl-RS",
+  ro: "ro-RO",
+};
+
+const APP_TRANSLATIONS = {
+  en: {
+    "brand.subtitle": "Eastern Orthodox web app",
+    "nav.today": "Today",
+    "nav.calendar": "Calendar",
+    "nav.readings": "Readings",
+    "nav.study": "Study",
+    "nav.library": "Library",
+    "nav.prayer": "Prayer",
+    "nav.assistant": "Assistant",
+    "nav.admin": "Admin",
+    "nav.settings": "Settings",
+    "nav.legal": "Legal",
+    "search.placeholder": "Search feasts, saints, prayers, lessons",
+    "search.noResults": "No results",
+    "search.try": "Try a feast, saint, church, topic, or reading.",
+    "aria.theme": "Toggle light and dark theme",
+    "settings.eyebrow": "Settings",
+    "settings.title": "Choose a Clear, Comfortable View",
+    "settings.reset": "Reset Settings",
+    "settings.simple.title": "Simple View",
+    "settings.simple.body": "Larger text, clearer buttons, calmer backgrounds, and less movement for easier daily use.",
+    "settings.simple.standard": "Full",
+    "settings.simple.simple": "Simple",
+    "settings.language.title": "Language",
+    "settings.language.body": "Choose the language used for the main navigation and settings.",
+    "settings.theme.title": "Theme",
+    "settings.theme.body": "Choose the light level that feels easiest to read.",
+    "settings.color.title": "Color",
+    "settings.color.body": "Keep the Orthodox gold, or soften the space with another accent.",
+    "settings.comfort.title": "Reading Comfort",
+    "settings.comfort.body": "Adjust text and spacing without changing the whole design.",
+    "settings.comfort.text": "Text",
+    "settings.comfort.spacing": "Spacing",
+    "settings.atmosphere.title": "Atmosphere",
+    "settings.atmosphere.body": "Set how present the icon-inspired backdrop should feel.",
+    "settings.atmosphere.backdrop": "Backdrop",
+    "settings.motion.title": "Quiet Motion",
+    "settings.motion.body": "Reduce hover movement and transitions.",
+    "settings.preview.eyebrow": "Preview",
+    "settings.preview.kicker": "Daily rhythm",
+    "settings.preview.title": "Peaceful",
+    "settings.preview.body": "Calendar, readings, prayer, and study stay familiar while the look adapts to you.",
+    "theme.dark": "Dark",
+    "theme.light": "Light",
+    "theme.system": "System",
+    "accent.gold": "Byzantine",
+    "accent.green": "Olive",
+    "accent.blue": "Aegean",
+    "accent.ruby": "Ruby",
+    "accent.violet": "Violet",
+    "accent.parchment": "Parchment",
+    "text.standard": "Standard",
+    "text.large": "Large",
+    "text.xl": "XL",
+    "density.compact": "Compact",
+    "density.comfortable": "Comfort",
+    "density.spacious": "Spacious",
+    "background.rich": "Rich",
+    "background.soft": "Soft",
+    "background.minimal": "Minimal",
+    "preview.copy.standard": "{accent} palette with {text}, {spacing}, {background}, and {motion}.",
+    "preview.copy.simple": "Simple view is on: {text}, {spacing}, {background}, and {motion}.",
+    "motion.normal": "gentle motion",
+    "motion.reduced": "quiet motion",
+    "preview.text.standard": "standard text",
+    "preview.text.large": "larger text",
+    "preview.text.xl": "extra-large text",
+    "preview.density.compact": "compact spacing",
+    "preview.density.comfortable": "comfortable spacing",
+    "preview.density.spacious": "spacious spacing",
+    "preview.background.rich": "rich background",
+    "preview.background.soft": "soft background",
+    "preview.background.minimal": "minimal background",
+  },
+  de: {
+    "brand.subtitle": "Ostorthodoxe Web-App",
+    "nav.today": "Heute",
+    "nav.calendar": "Kalender",
+    "nav.readings": "Lesungen",
+    "nav.study": "Lernen",
+    "nav.library": "Bibliothek",
+    "nav.prayer": "Gebet",
+    "nav.assistant": "Assistent",
+    "nav.admin": "Admin",
+    "nav.settings": "Einstellungen",
+    "nav.legal": "Recht",
+    "search.placeholder": "Feste, Heilige, Gebete, Lektionen suchen",
+    "search.noResults": "Keine Ergebnisse",
+    "search.try": "Suche nach Fest, Heiligem, Kirche, Thema oder Lesung.",
+    "aria.theme": "Helles und dunkles Design wechseln",
+    "settings.eyebrow": "Einstellungen",
+    "settings.title": "Eine klare, bequeme Ansicht wählen",
+    "settings.reset": "Zurücksetzen",
+    "settings.simple.title": "Einfacher Modus",
+    "settings.simple.body": "Größere Schrift, klare Schaltflächen, ruhiger Hintergrund und weniger Bewegung für die tägliche Nutzung.",
+    "settings.simple.standard": "Voll",
+    "settings.simple.simple": "Einfach",
+    "settings.language.title": "Sprache",
+    "settings.language.body": "Wähle die Sprache für Hauptnavigation und Einstellungen.",
+    "settings.theme.title": "Design",
+    "settings.theme.body": "Wähle die Helligkeit, die sich am besten lesen lässt.",
+    "settings.color.title": "Farbe",
+    "settings.color.body": "Behalte orthodoxes Gold oder wähle einen ruhigeren Akzent.",
+    "settings.comfort.title": "Lesekomfort",
+    "settings.comfort.body": "Passe Schrift und Abstand an, ohne das ganze Design zu ändern.",
+    "settings.comfort.text": "Text",
+    "settings.comfort.spacing": "Abstand",
+    "settings.atmosphere.title": "Atmosphäre",
+    "settings.atmosphere.body": "Lege fest, wie stark der ikonische Hintergrund wirken soll.",
+    "settings.atmosphere.backdrop": "Hintergrund",
+    "settings.motion.title": "Ruhige Bewegung",
+    "settings.motion.body": "Hover-Bewegungen und Übergänge reduzieren.",
+    "settings.preview.eyebrow": "Vorschau",
+    "settings.preview.kicker": "Täglicher Rhythmus",
+    "settings.preview.title": "Friedlich",
+    "settings.preview.body": "Kalender, Lesungen, Gebet und Lernen bleiben vertraut, während sich die Ansicht anpasst.",
+    "theme.dark": "Dunkel",
+    "theme.light": "Hell",
+    "theme.system": "System",
+    "accent.gold": "Byzantinisch",
+    "accent.green": "Olive",
+    "accent.blue": "Ägäis",
+    "accent.ruby": "Rubin",
+    "accent.violet": "Violett",
+    "accent.parchment": "Pergament",
+    "text.standard": "Normal",
+    "text.large": "Groß",
+    "text.xl": "XL",
+    "density.compact": "Kompakt",
+    "density.comfortable": "Bequem",
+    "density.spacious": "Weit",
+    "background.rich": "Reich",
+    "background.soft": "Sanft",
+    "background.minimal": "Minimal",
+    "preview.copy.standard": "{accent}-Palette mit {text}, {spacing}, {background} und {motion}.",
+    "preview.copy.simple": "Einfacher Modus ist aktiv: {text}, {spacing}, {background} und {motion}.",
+    "motion.normal": "sanfter Bewegung",
+    "motion.reduced": "ruhiger Bewegung",
+    "preview.text.standard": "normale Schrift",
+    "preview.text.large": "größere Schrift",
+    "preview.text.xl": "sehr große Schrift",
+    "preview.density.compact": "kompakte Abstände",
+    "preview.density.comfortable": "bequeme Abstände",
+    "preview.density.spacious": "weite Abstände",
+    "preview.background.rich": "lebendiger Hintergrund",
+    "preview.background.soft": "sanfter Hintergrund",
+    "preview.background.minimal": "minimaler Hintergrund",
+  },
+  ru: {
+    "brand.subtitle": "Восточно-православное веб-приложение",
+    "nav.today": "Сегодня",
+    "nav.calendar": "Календарь",
+    "nav.readings": "Чтения",
+    "nav.study": "Учёба",
+    "nav.library": "Библиотека",
+    "nav.prayer": "Молитва",
+    "nav.assistant": "Помощник",
+    "nav.admin": "Админ",
+    "nav.settings": "Настройки",
+    "nav.legal": "Право",
+    "search.placeholder": "Искать праздники, святых, молитвы, уроки",
+    "search.noResults": "Ничего не найдено",
+    "search.try": "Попробуйте праздник, святого, храм, тему или чтение.",
+    "aria.theme": "Переключить светлую и тёмную тему",
+    "settings.eyebrow": "Настройки",
+    "settings.title": "Выберите ясный и удобный вид",
+    "settings.reset": "Сбросить",
+    "settings.simple.title": "Простой вид",
+    "settings.simple.body": "Крупнее текст, понятнее кнопки, спокойнее фон и меньше движения для ежедневного пользования.",
+    "settings.simple.standard": "Полный",
+    "settings.simple.simple": "Простой",
+    "settings.language.title": "Язык",
+    "settings.language.body": "Выберите язык главного меню и настроек.",
+    "settings.theme.title": "Тема",
+    "settings.theme.body": "Выберите освещение, которое легче читать.",
+    "settings.color.title": "Цвет",
+    "settings.color.body": "Оставьте православное золото или выберите более мягкий акцент.",
+    "settings.comfort.title": "Комфорт чтения",
+    "settings.comfort.body": "Настройте текст и интервалы, не меняя весь дизайн.",
+    "settings.comfort.text": "Текст",
+    "settings.comfort.spacing": "Интервал",
+    "settings.atmosphere.title": "Атмосфера",
+    "settings.atmosphere.body": "Выберите, насколько заметным будет фон в стиле икон.",
+    "settings.atmosphere.backdrop": "Фон",
+    "settings.motion.title": "Тихое движение",
+    "settings.motion.body": "Уменьшить движения и переходы.",
+    "settings.preview.eyebrow": "Предпросмотр",
+    "settings.preview.kicker": "Дневной ритм",
+    "settings.preview.title": "Спокойно",
+    "settings.preview.body": "Календарь, чтения, молитва и учёба остаются привычными, а вид подстраивается под вас.",
+    "theme.dark": "Тёмная",
+    "theme.light": "Светлая",
+    "theme.system": "Система",
+    "accent.gold": "Византийский",
+    "accent.green": "Олива",
+    "accent.blue": "Эгейский",
+    "accent.ruby": "Рубин",
+    "accent.violet": "Фиолетовый",
+    "accent.parchment": "Пергамент",
+    "text.standard": "Обычный",
+    "text.large": "Крупный",
+    "text.xl": "XL",
+    "density.compact": "Компактно",
+    "density.comfortable": "Удобно",
+    "density.spacious": "Свободно",
+    "background.rich": "Насыщенный",
+    "background.soft": "Мягкий",
+    "background.minimal": "Минимальный",
+    "preview.copy.standard": "{accent} стиль: {text}, {spacing}, {background} и {motion}.",
+    "preview.copy.simple": "Простой вид включён: {text}, {spacing}, {background} и {motion}.",
+    "motion.normal": "мягкое движение",
+    "motion.reduced": "тихое движение",
+    "preview.text.standard": "обычный текст",
+    "preview.text.large": "крупный текст",
+    "preview.text.xl": "очень крупный текст",
+    "preview.density.compact": "компактные интервалы",
+    "preview.density.comfortable": "удобные интервалы",
+    "preview.density.spacious": "свободные интервалы",
+    "preview.background.rich": "насыщенный фон",
+    "preview.background.soft": "мягкий фон",
+    "preview.background.minimal": "минимальный фон",
+  },
+  el: {
+    "brand.subtitle": "Ανατολική Ορθόδοξη εφαρμογή",
+    "nav.today": "Σήμερα",
+    "nav.calendar": "Ημερολόγιο",
+    "nav.readings": "Αναγνώσματα",
+    "nav.study": "Μελέτη",
+    "nav.library": "Βιβλιοθήκη",
+    "nav.prayer": "Προσευχή",
+    "nav.assistant": "Βοηθός",
+    "nav.admin": "Διαχείριση",
+    "nav.settings": "Ρυθμίσεις",
+    "nav.legal": "Νομικά",
+    "search.placeholder": "Αναζήτηση εορτών, αγίων, προσευχών, μαθημάτων",
+    "settings.title": "Επιλέξτε καθαρή και άνετη προβολή",
+    "settings.simple.title": "Απλή προβολή",
+    "settings.language.title": "Γλώσσα",
+  },
+  sr: {
+    "brand.subtitle": "Источноправославна веб апликација",
+    "nav.today": "Данас",
+    "nav.calendar": "Календар",
+    "nav.readings": "Читања",
+    "nav.study": "Учење",
+    "nav.library": "Библиотека",
+    "nav.prayer": "Молитва",
+    "nav.assistant": "Помоћник",
+    "nav.admin": "Админ",
+    "nav.settings": "Подешавања",
+    "nav.legal": "Правно",
+    "search.placeholder": "Претражи празнике, свеце, молитве, лекције",
+    "settings.title": "Изаберите јасан и удобан приказ",
+    "settings.simple.title": "Једноставан приказ",
+    "settings.language.title": "Језик",
+  },
+  ro: {
+    "brand.subtitle": "Aplicație web ortodoxă răsăriteană",
+    "nav.today": "Azi",
+    "nav.calendar": "Calendar",
+    "nav.readings": "Citiri",
+    "nav.study": "Studiu",
+    "nav.library": "Bibliotecă",
+    "nav.prayer": "Rugăciune",
+    "nav.assistant": "Asistent",
+    "nav.admin": "Admin",
+    "nav.settings": "Setări",
+    "nav.legal": "Legal",
+    "search.placeholder": "Caută sărbători, sfinți, rugăciuni, lecții",
+    "settings.title": "Alegeți o vedere clară și confortabilă",
+    "settings.simple.title": "Vedere simplă",
+    "settings.language.title": "Limbă",
+  },
+};
+
 function readPersonalization(setting) {
   const fallback = PERSONALIZATION_DEFAULTS[setting];
   const value = readStorage(PERSONALIZATION_STORAGE_KEYS[setting], fallback);
@@ -141,6 +439,8 @@ function readPersonalization(setting) {
 
 const state = {
   jurisdiction: readStorage("oc:j", "antiochian"),
+  appLanguage: readPersonalization("appLanguage"),
+  simpleMode: readPersonalization("simpleMode"),
   theme: readPersonalization("theme"),
   accent: readPersonalization("accent"),
   textScale: readPersonalization("textScale"),
@@ -355,8 +655,33 @@ function escapeHtml(value) {
     .replaceAll("'", "&#039;");
 }
 
+function appLocale() {
+  return APP_LANGUAGE_LOCALES[state.appLanguage] || APP_LANGUAGE_LOCALES.en;
+}
+
+function t(key) {
+  return APP_TRANSLATIONS[state.appLanguage]?.[key] || APP_TRANSLATIONS.en[key] || key;
+}
+
+function interpolate(key, values) {
+  return t(key).replace(/\{(\w+)\}/g, (_, name) => values[name] ?? "");
+}
+
+function applyLanguage() {
+  document.documentElement.lang = state.appLanguage;
+  $$("[data-i18n]").forEach((element) => {
+    element.textContent = t(element.dataset.i18n);
+  });
+  $$("[data-i18n-placeholder]").forEach((element) => {
+    element.setAttribute("placeholder", t(element.dataset.i18nPlaceholder));
+  });
+  $$("[data-i18n-aria]").forEach((element) => {
+    element.setAttribute("aria-label", t(element.dataset.i18nAria));
+  });
+}
+
 function formatDate(date, options = {}) {
-  return new Intl.DateTimeFormat("en", { weekday: "long", month: "long", day: "numeric", year: "numeric", ...options }).format(date);
+  return new Intl.DateTimeFormat(appLocale(), { weekday: "long", month: "long", day: "numeric", year: "numeric", ...options }).format(date);
 }
 
 function isoDate(date) {
@@ -876,6 +1201,8 @@ function renderReadingsView() {
 
 const LOCAL_APP_DATA_KEYS = [
   "oc:j",
+  "oc:appLanguage",
+  "oc:simpleMode",
   "oc:theme",
   "oc:accent",
   "oc:textScale",
@@ -1119,7 +1446,10 @@ function initEvents() {
       setActiveNav(link.getAttribute("href"));
     });
   });
-  window.addEventListener("hashchange", () => setActiveNav());
+  window.addEventListener("hashchange", () => {
+    setActiveNav();
+    requestAnimationFrame(scrollToCurrentSection);
+  });
   setActiveNav();
 
   $$("[data-calendar-mode]").forEach((button) => {
@@ -1207,7 +1537,7 @@ function renderGlobalSearch() {
             `<a class="result-item" href="${item.href}"><h4>${escapeHtml(item.title)}</h4><p>${escapeHtml(item.meta)}</p><p>${escapeHtml(item.detail)}</p></a>`,
         )
         .join("")
-      : `<div class="result-item"><h4>No results</h4><p>Try a feast, saint, church, topic, or reading.</p></div>`;
+      : `<div class="result-item"><h4>${escapeHtml(t("search.noResults"))}</h4><p>${escapeHtml(t("search.try"))}</p></div>`;
 }
 
 function setActiveNav(targetHash = location.hash || "#overview") {
@@ -1221,6 +1551,12 @@ function setActiveNav(targetHash = location.hash || "#overview") {
       link.removeAttribute("aria-current");
     }
   });
+}
+
+function scrollToCurrentSection() {
+  const targetHash = location.hash || "#overview";
+  const target = document.querySelector(targetHash);
+  if (target) target.scrollIntoView({ block: "start" });
 }
 
 function getSystemTheme() {
@@ -1239,6 +1575,7 @@ function applyTheme() {
 }
 
 function applyPersonalization() {
+  document.body.dataset.simple = state.simpleMode;
   document.body.dataset.accent = state.accent;
   document.body.dataset.text = state.textScale;
   document.body.dataset.density = state.density;
@@ -1260,19 +1597,35 @@ function renderSettings() {
 
   $("#reduce-motion-toggle").checked = state.motion === "reduced";
 
-  const accent = PERSONALIZATION_COPY.accent[state.accent] || PERSONALIZATION_COPY.accent.gold;
-  const themeLabel = state.theme === "system" ? `System ${PERSONALIZATION_COPY.theme[effectiveTheme()]}` : PERSONALIZATION_COPY.theme[state.theme];
-  const motionLabel = state.motion === "reduced" ? "quiet motion" : "gentle motion";
-  previewTitle.textContent = `${accent.label} ${themeLabel}`;
-  previewCopy.textContent = `${accent.copy} Uses ${PERSONALIZATION_COPY.textScale[state.textScale]}, ${PERSONALIZATION_COPY.density[state.density]}, ${PERSONALIZATION_COPY.background[state.background]}, and ${motionLabel}.`;
+  const themeLabel = state.theme === "system" ? `${t("theme.system")} ${t(`theme.${effectiveTheme()}`)}` : t(`theme.${state.theme}`);
+  const template = state.simpleMode === "on" ? "preview.copy.simple" : "preview.copy.standard";
+  previewTitle.textContent = `${t(`accent.${state.accent}`)} ${themeLabel}`;
+  previewCopy.textContent = interpolate(template, {
+    accent: t(`accent.${state.accent}`),
+    text: t(`preview.text.${state.textScale}`),
+    spacing: t(`preview.density.${state.density}`),
+    background: t(`preview.background.${state.background}`),
+    motion: t(`motion.${state.motion}`),
+  });
 }
 
 function updateSetting(setting, value) {
   if (!PERSONALIZATION_OPTIONS[setting]?.includes(value)) return;
   state[setting] = value;
   writeStorage(PERSONALIZATION_STORAGE_KEYS[setting], value);
+  if (setting === "simpleMode" && value === "on") {
+    Object.entries(SIMPLE_MODE_DEFAULTS).forEach(([simpleSetting, simpleValue]) => {
+      state[simpleSetting] = simpleValue;
+      writeStorage(PERSONALIZATION_STORAGE_KEYS[simpleSetting], simpleValue);
+    });
+  }
   applyPersonalization();
-  renderSettings();
+  if (setting === "appLanguage") {
+    renderAll();
+  } else {
+    renderSettings();
+    applyLanguage();
+  }
 }
 
 function resetPersonalization() {
@@ -1281,7 +1634,7 @@ function resetPersonalization() {
     writeStorage(PERSONALIZATION_STORAGE_KEYS[setting], value);
   });
   applyPersonalization();
-  renderSettings();
+  renderAll();
 }
 
 function renderAll() {
@@ -1294,6 +1647,7 @@ function renderAll() {
   renderAssistant();
   renderAdmin();
   renderSettings();
+  applyLanguage();
 }
 
 function registerServiceWorker() {
@@ -1306,4 +1660,5 @@ applyPersonalization();
 initEvents();
 renderConsentBanner();
 renderAll();
+requestAnimationFrame(scrollToCurrentSection);
 registerServiceWorker();

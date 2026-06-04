@@ -15,10 +15,10 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="format-detection" content="telephone=no" />
     <title>Orthodox Companion</title>
-    <link rel="manifest" href="site.webmanifest?v=ios26-v7" />
+    <link rel="manifest" href="site.webmanifest?v=simple-v8" />
     <link rel="icon" href="assets/app-icon-192.png" />
     <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
-    <link rel="stylesheet" href="styles.css?v=ios26-v7" />
+    <link rel="stylesheet" href="styles.css?v=simple-v8" />
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -34,50 +34,50 @@
           </span>
           <span>
             <strong>Orthodox Companion</strong>
-            <small>Eastern Orthodox web app</small>
+            <small data-i18n="brand.subtitle">Eastern Orthodox web app</small>
           </span>
         </a>
 
         <nav class="nav-list" aria-label="Sections">
           <a href="#overview" class="nav-link active">
             <svg class="nav-icon" viewBox="0 0 24 24" role="img"><circle cx="12" cy="12" r="4" /><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6 7 7M17 17l1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4" /></svg>
-            <span class="nav-label">Today</span>
+            <span class="nav-label" data-i18n="nav.today">Today</span>
           </a>
           <a href="#calendar" class="nav-link">
             <svg class="nav-icon" viewBox="0 0 24 24" role="img"><path d="M5 5h14v15H5zM8 3v4M16 3v4M5 10h14" /></svg>
-            <span class="nav-label">Calendar</span>
+            <span class="nav-label" data-i18n="nav.calendar">Calendar</span>
           </a>
           <a href="#readings" class="nav-link">
             <svg class="nav-icon" viewBox="0 0 24 24" role="img"><path d="M5 4h7a3 3 0 0 1 3 3v15a3 3 0 0 0-3-3H5zM15 7a3 3 0 0 1 3-3h1v15h-1a3 3 0 0 0-3 3z" /></svg>
-            <span class="nav-label">Readings</span>
+            <span class="nav-label" data-i18n="nav.readings">Readings</span>
           </a>
           <a href="#study" class="nav-link">
             <svg class="nav-icon" viewBox="0 0 24 24" role="img"><path d="m3 9 9-5 9 5-9 5zM7 12v4c2.8 2 7.2 2 10 0v-4" /></svg>
-            <span class="nav-label">Study</span>
+            <span class="nav-label" data-i18n="nav.study">Study</span>
           </a>
           <a href="#library" class="nav-link">
             <svg class="nav-icon" viewBox="0 0 24 24" role="img"><path d="M5 5h6v14H5zM13 5h6v14h-6zM8 8v8M16 8v8" /></svg>
-            <span class="nav-label">Library</span>
+            <span class="nav-label" data-i18n="nav.library">Library</span>
           </a>
           <a href="#community" class="nav-link">
             <svg class="nav-icon" viewBox="0 0 24 24" role="img"><path d="M12 5v14M7 10h10M6 20h12M8 5h8" /></svg>
-            <span class="nav-label">Prayer</span>
+            <span class="nav-label" data-i18n="nav.prayer">Prayer</span>
           </a>
           <a href="#assistant" class="nav-link">
             <svg class="nav-icon" viewBox="0 0 24 24" role="img"><path d="M5 6h14v10H9l-4 4zM9 10h6M9 13h4" /></svg>
-            <span class="nav-label">Assistant</span>
+            <span class="nav-label" data-i18n="nav.assistant">Assistant</span>
           </a>
           <a href="#admin" class="nav-link">
             <svg class="nav-icon" viewBox="0 0 24 24" role="img"><path d="M12 3 5 6v5c0 4.4 2.8 7.4 7 10 4.2-2.6 7-5.6 7-10V6zM9 12l2 2 4-5" /></svg>
-            <span class="nav-label">Admin</span>
+            <span class="nav-label" data-i18n="nav.admin">Admin</span>
           </a>
           <a href="#settings" class="nav-link">
             <svg class="nav-icon" viewBox="0 0 24 24" role="img"><path d="M5 7h14M5 12h14M5 17h14M9 5v4M15 10v4M11 15v4" /></svg>
-            <span class="nav-label">Settings</span>
+            <span class="nav-label" data-i18n="nav.settings">Settings</span>
           </a>
           <a href="#legal" class="nav-link">
             <svg class="nav-icon" viewBox="0 0 24 24" role="img"><path d="M7 3h7l5 5v13H7zM14 3v5h5M10 13h6M10 17h5" /></svg>
-            <span class="nav-label">Legal</span>
+            <span class="nav-label" data-i18n="nav.legal">Legal</span>
           </a>
         </nav>
 
@@ -99,7 +99,7 @@
               <span aria-hidden="true">
                 <svg viewBox="0 0 24 24" role="img"><circle cx="11" cy="11" r="7" /><path d="M16.5 16.5 21 21" /></svg>
               </span>
-              <input id="global-search" type="search" placeholder="Search feasts, saints, prayers, lessons" autocomplete="off" />
+              <input id="global-search" type="search" placeholder="Search feasts, saints, prayers, lessons" autocomplete="off" data-i18n-placeholder="search.placeholder" />
             </label>
             <select id="jurisdiction-select" aria-label="Jurisdiction">
               <option value="antiochian">Antiochian</option>
@@ -109,7 +109,7 @@
               <option value="russian">Russian</option>
               <option value="serbian">Serbian</option>
             </select>
-            <button class="icon-button" id="theme-toggle" type="button" aria-label="Toggle light and dark theme">
+            <button class="icon-button" id="theme-toggle" type="button" aria-label="Toggle light and dark theme" data-i18n-aria="aria.theme">
               <svg viewBox="0 0 24 24" role="img"><path d="M12 3v2M12 19v2M5.6 5.6 7 7M17 17l1.4 1.4M3 12h2M19 12h2M5.6 18.4 7 17M17 7l1.4-1.4" /><circle cx="12" cy="12" r="4" /></svg>
             </button>
           </div>
@@ -393,55 +393,81 @@
         <section id="settings" class="view-section">
           <div class="section-heading wide">
             <div>
-              <p class="eyebrow">Settings</p>
-              <h2>Make the App Feel Like Yours</h2>
+              <p class="eyebrow" data-i18n="settings.eyebrow">Settings</p>
+              <h2 data-i18n="settings.title">Choose a Clear, Comfortable View</h2>
             </div>
-            <button class="text-button" id="reset-personalization" type="button">Reset Look</button>
+            <button class="text-button" id="reset-personalization" type="button" data-i18n="settings.reset">Reset Settings</button>
           </div>
 
           <div class="settings-layout">
             <article class="panel settings-panel">
-              <div class="setting-group">
+              <div class="setting-group simple-setting">
                 <div>
-                  <h3>Theme</h3>
-                  <p>Choose the light level that feels easiest to read.</p>
+                  <h3 data-i18n="settings.simple.title">Simple View</h3>
+                  <p data-i18n="settings.simple.body">Larger text, clearer buttons, calmer backgrounds, and less movement for easier daily use.</p>
                 </div>
-                <div class="segmented-control setting-control" role="group" aria-label="Theme">
-                  <button type="button" data-setting="theme" data-value="dark">Dark</button>
-                  <button type="button" data-setting="theme" data-value="light">Light</button>
-                  <button type="button" data-setting="theme" data-value="system">System</button>
+                <div class="segmented-control setting-control" role="group" aria-label="Simple view">
+                  <button type="button" data-setting="simpleMode" data-value="off" data-i18n="settings.simple.standard">Full</button>
+                  <button type="button" data-setting="simpleMode" data-value="on" data-i18n="settings.simple.simple">Simple</button>
                 </div>
               </div>
 
               <div class="setting-group">
                 <div>
-                  <h3>Color</h3>
-                  <p>Keep the Orthodox gold, or soften the space with another accent.</p>
+                  <h3 data-i18n="settings.language.title">Language</h3>
+                  <p data-i18n="settings.language.body">Choose the language used for the main navigation and settings.</p>
+                </div>
+                <div class="language-grid" role="group" aria-label="App language">
+                  <button type="button" data-setting="appLanguage" data-value="en">English</button>
+                  <button type="button" data-setting="appLanguage" data-value="de">Deutsch</button>
+                  <button type="button" data-setting="appLanguage" data-value="ru">Русский</button>
+                  <button type="button" data-setting="appLanguage" data-value="el">Ελληνικά</button>
+                  <button type="button" data-setting="appLanguage" data-value="sr">Српски</button>
+                  <button type="button" data-setting="appLanguage" data-value="ro">Română</button>
+                </div>
+              </div>
+
+              <div class="setting-group">
+                <div>
+                  <h3 data-i18n="settings.theme.title">Theme</h3>
+                  <p data-i18n="settings.theme.body">Choose the light level that feels easiest to read.</p>
+                </div>
+                <div class="segmented-control setting-control" role="group" aria-label="Theme">
+                  <button type="button" data-setting="theme" data-value="dark" data-i18n="theme.dark">Dark</button>
+                  <button type="button" data-setting="theme" data-value="light" data-i18n="theme.light">Light</button>
+                  <button type="button" data-setting="theme" data-value="system" data-i18n="theme.system">System</button>
+                </div>
+              </div>
+
+              <div class="setting-group">
+                <div>
+                  <h3 data-i18n="settings.color.title">Color</h3>
+                  <p data-i18n="settings.color.body">Keep the Orthodox gold, or soften the space with another accent.</p>
                 </div>
                 <div class="swatch-grid" role="group" aria-label="Accent color">
                   <button class="swatch-button" type="button" data-setting="accent" data-value="gold">
                     <span class="swatch gold"></span>
-                    <strong>Byzantine</strong>
+                    <strong data-i18n="accent.gold">Byzantine</strong>
                   </button>
                   <button class="swatch-button" type="button" data-setting="accent" data-value="green">
                     <span class="swatch green"></span>
-                    <strong>Olive</strong>
+                    <strong data-i18n="accent.green">Olive</strong>
                   </button>
                   <button class="swatch-button" type="button" data-setting="accent" data-value="blue">
                     <span class="swatch blue"></span>
-                    <strong>Aegean</strong>
+                    <strong data-i18n="accent.blue">Aegean</strong>
                   </button>
                   <button class="swatch-button" type="button" data-setting="accent" data-value="ruby">
                     <span class="swatch ruby"></span>
-                    <strong>Ruby</strong>
+                    <strong data-i18n="accent.ruby">Ruby</strong>
                   </button>
                   <button class="swatch-button" type="button" data-setting="accent" data-value="violet">
                     <span class="swatch violet"></span>
-                    <strong>Violet</strong>
+                    <strong data-i18n="accent.violet">Violet</strong>
                   </button>
                   <button class="swatch-button" type="button" data-setting="accent" data-value="parchment">
                     <span class="swatch parchment"></span>
-                    <strong>Parchment</strong>
+                    <strong data-i18n="accent.parchment">Parchment</strong>
                   </button>
                 </div>
               </div>
@@ -450,24 +476,24 @@
             <article class="panel settings-panel">
               <div class="setting-group">
                 <div>
-                  <h3>Reading Comfort</h3>
-                  <p>Adjust text and spacing without changing the whole design.</p>
+                  <h3 data-i18n="settings.comfort.title">Reading Comfort</h3>
+                  <p data-i18n="settings.comfort.body">Adjust text and spacing without changing the whole design.</p>
                 </div>
                 <div class="settings-stack">
                   <div class="setting-row">
-                    <span>Text</span>
+                    <span data-i18n="settings.comfort.text">Text</span>
                     <div class="segmented-control setting-control small" role="group" aria-label="Text size">
-                      <button type="button" data-setting="textScale" data-value="standard">Standard</button>
-                      <button type="button" data-setting="textScale" data-value="large">Large</button>
-                      <button type="button" data-setting="textScale" data-value="xl">XL</button>
+                      <button type="button" data-setting="textScale" data-value="standard" data-i18n="text.standard">Standard</button>
+                      <button type="button" data-setting="textScale" data-value="large" data-i18n="text.large">Large</button>
+                      <button type="button" data-setting="textScale" data-value="xl" data-i18n="text.xl">XL</button>
                     </div>
                   </div>
                   <div class="setting-row">
-                    <span>Spacing</span>
+                    <span data-i18n="settings.comfort.spacing">Spacing</span>
                     <div class="segmented-control setting-control small" role="group" aria-label="Spacing">
-                      <button type="button" data-setting="density" data-value="compact">Compact</button>
-                      <button type="button" data-setting="density" data-value="comfortable">Comfort</button>
-                      <button type="button" data-setting="density" data-value="spacious">Spacious</button>
+                      <button type="button" data-setting="density" data-value="compact" data-i18n="density.compact">Compact</button>
+                      <button type="button" data-setting="density" data-value="comfortable" data-i18n="density.comfortable">Comfort</button>
+                      <button type="button" data-setting="density" data-value="spacious" data-i18n="density.spacious">Spacious</button>
                     </div>
                   </div>
                 </div>
@@ -475,34 +501,34 @@
 
               <div class="setting-group">
                 <div>
-                  <h3>Atmosphere</h3>
-                  <p>Set how present the icon-inspired backdrop should feel.</p>
+                  <h3 data-i18n="settings.atmosphere.title">Atmosphere</h3>
+                  <p data-i18n="settings.atmosphere.body">Set how present the icon-inspired backdrop should feel.</p>
                 </div>
                 <div class="settings-stack">
                   <div class="setting-row">
-                    <span>Backdrop</span>
+                    <span data-i18n="settings.atmosphere.backdrop">Backdrop</span>
                     <div class="segmented-control setting-control small" role="group" aria-label="Backdrop">
-                      <button type="button" data-setting="background" data-value="rich">Rich</button>
-                      <button type="button" data-setting="background" data-value="soft">Soft</button>
-                      <button type="button" data-setting="background" data-value="minimal">Minimal</button>
+                      <button type="button" data-setting="background" data-value="rich" data-i18n="background.rich">Rich</button>
+                      <button type="button" data-setting="background" data-value="soft" data-i18n="background.soft">Soft</button>
+                      <button type="button" data-setting="background" data-value="minimal" data-i18n="background.minimal">Minimal</button>
                     </div>
                   </div>
                   <label class="toggle-row">
                     <input id="reduce-motion-toggle" type="checkbox" />
-                    <span><strong>Quiet Motion</strong><small>Reduce hover movement and transitions.</small></span>
+                    <span><strong data-i18n="settings.motion.title">Quiet Motion</strong><small data-i18n="settings.motion.body">Reduce hover movement and transitions.</small></span>
                   </label>
                 </div>
               </div>
             </article>
 
             <aside class="panel settings-preview" aria-live="polite">
-              <p class="eyebrow">Preview</p>
+              <p class="eyebrow" data-i18n="settings.preview.eyebrow">Preview</p>
               <h3 id="settings-preview-title">Byzantine Dark</h3>
               <p id="settings-preview-copy">Gold accents, calm spacing, and a candlelit reading surface.</p>
               <div class="preview-card">
-                <span class="metric-kicker">Daily rhythm</span>
-                <strong>Peaceful</strong>
-                <p>Calendar, readings, prayer, and study stay familiar while the look adapts to you.</p>
+                <span class="metric-kicker" data-i18n="settings.preview.kicker">Daily rhythm</span>
+                <strong data-i18n="settings.preview.title">Peaceful</strong>
+                <p data-i18n="settings.preview.body">Calendar, readings, prayer, and study stay familiar while the look adapts to you.</p>
               </div>
             </aside>
           </div>
@@ -522,7 +548,7 @@
               <h3>Privacy Policy</h3>
               <p><strong>Controller:</strong> Orthodox Companion / rg-ru OC-project. This is a public prototype hosted on GitHub Pages. Replace this line with the full legal name, postal address, and contact email of the operator before a commercial or public launch beyond this prototype.</p>
               <p><strong>Purpose:</strong> The site provides an Orthodox Christian companion experience: fasting calendar, readings, study progress, prayer wall preview, church finder, and source-backed assistant prototype.</p>
-              <p><strong>Data processed in this web release:</strong> app settings, consent choices, theme, accent palette, reading comfort preferences, jurisdiction, bookmarks, local reading progress, local notes, local prayer preview entries, local chat history, and optional browser geolocation for church sorting.</p>
+              <p><strong>Data processed in this web release:</strong> app settings, consent choices, app language, simple-view preference, theme, accent palette, reading comfort preferences, jurisdiction, bookmarks, local reading progress, local notes, local prayer preview entries, local chat history, and optional browser geolocation for church sorting.</p>
               <p><strong>Location:</strong> Location is requested only after the user clicks Find Near Me, accepts the in-app location notice, and grants the browser permission. Coordinates are used once in the browser to sort sample churches by distance. Coordinates are not stored, not sent to a backend, and not shared by this static site.</p>
               <p><strong>Legal basis:</strong> essential local storage is used to provide features requested by the user. Optional location is based on consent. Future analytics, marketing, community accounts, Firebase sync, or AI backend processing must remain off until a specific consent and production privacy notice are in place.</p>
               <p><strong>Storage period:</strong> local app data remains in the user's browser until the user clears browser storage or uses the controls in this app. Consent choices are remembered for 180 days unless changed earlier.</p>
@@ -659,6 +685,6 @@
       </section>
     </div>
 
-    <script src="script.js?v=ios26-v7" defer></script>
+    <script src="script.js?v=simple-v8" defer></script>
   </body>
 </html>
