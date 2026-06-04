@@ -53,7 +53,7 @@ Then open `http://localhost:4173`.
 - Source-backed AI Orthodox Assistant prototype with approved-source model.
 - Admin dashboard surfaces for content, moderation, and API health.
 - Personalization settings for theme, accent palette, reading comfort, spacing, background strength, and reduced motion.
-- iOS/Android install metadata, square app icons, mobile bottom navigation, safe-area spacing, and glass-style app surfaces.
+- iOS 26-inspired Liquid Glass app shell, icon tab navigation, iOS/Android install metadata, square app icons, mobile safe-area spacing, and app-style glass surfaces.
 - Cookie/local-storage consent, separate location consent for Church Finder, legal center, local data deletion, PWA manifest, service worker cache, responsive dark/light design, and GitHub Pages CI/CD.
 
 ## Legal and Privacy

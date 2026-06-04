@@ -81,6 +81,12 @@ for (const marker of ["settings-preview-title", "data-setting=\"accent\"", "redu
   }
 }
 
+for (const marker of ["nav-icon", "ios26-v7"]) {
+  if (!html.includes(marker)) {
+    failures.push(`Missing iPhone app shell marker ${marker}`);
+  }
+}
+
 const manifest = JSON.parse(fs.readFileSync(path.join(root, "site.webmanifest"), "utf8"));
 if (manifest.name !== "Orthodox Companion") failures.push("Manifest name mismatch");
 if (manifest.display !== "standalone") failures.push("Manifest display should be standalone");
@@ -94,6 +100,7 @@ const css = fs.readFileSync(path.join(root, "styles.css"), "utf8");
 if (!css.includes("@media")) failures.push("Responsive media queries missing");
 if (!css.includes("--gold")) failures.push("Design tokens missing");
 if (!css.includes("safe-area-inset-bottom")) failures.push("Mobile safe-area styling missing");
+if (!css.includes("--tabbar-height")) failures.push("Mobile tab bar token missing");
 
 if (failures.length > 0) {
   console.error(failures.join("\n"));

@@ -1116,10 +1116,11 @@ function initEvents() {
 
   $$(".nav-link").forEach((link) => {
     link.addEventListener("click", () => {
-      $$(".nav-link").forEach((item) => item.classList.remove("active"));
-      link.classList.add("active");
+      setActiveNav(link.getAttribute("href"));
     });
   });
+  window.addEventListener("hashchange", () => setActiveNav());
+  setActiveNav();
 
   $$("[data-calendar-mode]").forEach((button) => {
     button.addEventListener("click", () => {
@@ -1207,6 +1208,19 @@ function renderGlobalSearch() {
         )
         .join("")
       : `<div class="result-item"><h4>No results</h4><p>Try a feast, saint, church, topic, or reading.</p></div>`;
+}
+
+function setActiveNav(targetHash = location.hash || "#overview") {
+  const normalizedHash = targetHash || "#overview";
+  $$(".nav-link").forEach((link) => {
+    const isActive = link.getAttribute("href") === normalizedHash;
+    link.classList.toggle("active", isActive);
+    if (isActive) {
+      link.setAttribute("aria-current", "page");
+    } else {
+      link.removeAttribute("aria-current");
+    }
+  });
 }
 
 function getSystemTheme() {
