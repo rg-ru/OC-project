@@ -1450,6 +1450,7 @@ function initEvents() {
     setActiveNav();
     requestAnimationFrame(scrollToCurrentSection);
   });
+  window.addEventListener("load", () => requestAnimationFrame(scrollToCurrentSection));
   setActiveNav();
 
   $$("[data-calendar-mode]").forEach((button) => {
