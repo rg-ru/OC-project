@@ -9,6 +9,10 @@ const requiredFiles = [
   "site.webmanifest",
   "sw.js",
   "assets/byzantine-hero.png",
+  "assets/app-icon-192.png",
+  "assets/app-icon-512.png",
+  "assets/app-icon-1024.png",
+  "assets/apple-touch-icon.png",
   ".github/workflows/pages.yml",
   "docs/architecture.md",
   "docs/database-schema.md",
@@ -27,6 +31,7 @@ const requiredSections = [
   "community",
   "assistant",
   "admin",
+  "settings",
   "legal",
 ];
 
@@ -53,6 +58,9 @@ for (const feature of [
   "renderPrayers",
   "renderGlobalSearch",
   "renderConsentBanner",
+  "renderSettings",
+  "applyPersonalization",
+  "updateSetting",
   "requestChurchLocation",
   "escapeHtml",
 ]) {
@@ -67,13 +75,25 @@ for (const marker of ["consent-banner", "location-modal", "privacy-policy", "coo
   }
 }
 
+for (const marker of ["settings-preview-title", "data-setting=\"accent\"", "reduce-motion-toggle"]) {
+  if (!html.includes(marker)) {
+    failures.push(`Missing settings marker ${marker}`);
+  }
+}
+
 const manifest = JSON.parse(fs.readFileSync(path.join(root, "site.webmanifest"), "utf8"));
 if (manifest.name !== "Orthodox Companion") failures.push("Manifest name mismatch");
+if (manifest.display !== "standalone") failures.push("Manifest display should be standalone");
+if (manifest.orientation !== "portrait-primary") failures.push("Manifest orientation missing");
 if (!manifest.icons?.length) failures.push("Manifest icon missing");
+if (!manifest.icons?.some((icon) => icon.sizes === "512x512" && icon.purpose?.includes("maskable"))) {
+  failures.push("Manifest maskable 512 icon missing");
+}
 
 const css = fs.readFileSync(path.join(root, "styles.css"), "utf8");
 if (!css.includes("@media")) failures.push("Responsive media queries missing");
 if (!css.includes("--gold")) failures.push("Design tokens missing");
+if (!css.includes("safe-area-inset-bottom")) failures.push("Mobile safe-area styling missing");
 
 if (failures.length > 0) {
   console.error(failures.join("\n"));

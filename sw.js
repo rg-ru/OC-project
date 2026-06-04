@@ -1,4 +1,4 @@
-const CACHE_NAME = "orthodox-companion-v3";
+const CACHE_NAME = "orthodox-companion-v6";
 const ASSETS = [
   ".",
   "index.html",
@@ -6,6 +6,10 @@ const ASSETS = [
   "script.js",
   "site.webmanifest",
   "assets/byzantine-hero.png",
+  "assets/app-icon-192.png",
+  "assets/app-icon-512.png",
+  "assets/app-icon-1024.png",
+  "assets/apple-touch-icon.png",
 ];
 
 self.addEventListener("install", (event) => {

@@ -2,15 +2,22 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta
       name="description"
       content="Orthodox Companion is a web-first Orthodox Christian companion with fasting, readings, feast countdowns, study tools, quotes, prayer requests, and source-backed guidance."
     />
-    <meta name="theme-color" content="#16120d" />
+    <meta name="theme-color" content="#16120d" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f5efe2" media="(prefers-color-scheme: light)" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Orthodox" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="format-detection" content="telephone=no" />
     <title>Orthodox Companion</title>
     <link rel="manifest" href="site.webmanifest" />
-    <link rel="icon" href="assets/byzantine-hero.png" />
+    <link rel="icon" href="assets/app-icon-192.png" />
+    <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
@@ -40,6 +47,7 @@
           <a href="#community" class="nav-link">Prayer</a>
           <a href="#assistant" class="nav-link">Assistant</a>
           <a href="#admin" class="nav-link">Admin</a>
+          <a href="#settings" class="nav-link">Settings</a>
           <a href="#legal" class="nav-link">Legal</a>
         </nav>
 
@@ -352,6 +360,124 @@
           </div>
         </section>
 
+        <section id="settings" class="view-section">
+          <div class="section-heading wide">
+            <div>
+              <p class="eyebrow">Settings</p>
+              <h2>Make the App Feel Like Yours</h2>
+            </div>
+            <button class="text-button" id="reset-personalization" type="button">Reset Look</button>
+          </div>
+
+          <div class="settings-layout">
+            <article class="panel settings-panel">
+              <div class="setting-group">
+                <div>
+                  <h3>Theme</h3>
+                  <p>Choose the light level that feels easiest to read.</p>
+                </div>
+                <div class="segmented-control setting-control" role="group" aria-label="Theme">
+                  <button type="button" data-setting="theme" data-value="dark">Dark</button>
+                  <button type="button" data-setting="theme" data-value="light">Light</button>
+                  <button type="button" data-setting="theme" data-value="system">System</button>
+                </div>
+              </div>
+
+              <div class="setting-group">
+                <div>
+                  <h3>Color</h3>
+                  <p>Keep the Orthodox gold, or soften the space with another accent.</p>
+                </div>
+                <div class="swatch-grid" role="group" aria-label="Accent color">
+                  <button class="swatch-button" type="button" data-setting="accent" data-value="gold">
+                    <span class="swatch gold"></span>
+                    <strong>Byzantine</strong>
+                  </button>
+                  <button class="swatch-button" type="button" data-setting="accent" data-value="green">
+                    <span class="swatch green"></span>
+                    <strong>Olive</strong>
+                  </button>
+                  <button class="swatch-button" type="button" data-setting="accent" data-value="blue">
+                    <span class="swatch blue"></span>
+                    <strong>Aegean</strong>
+                  </button>
+                  <button class="swatch-button" type="button" data-setting="accent" data-value="ruby">
+                    <span class="swatch ruby"></span>
+                    <strong>Ruby</strong>
+                  </button>
+                  <button class="swatch-button" type="button" data-setting="accent" data-value="violet">
+                    <span class="swatch violet"></span>
+                    <strong>Violet</strong>
+                  </button>
+                  <button class="swatch-button" type="button" data-setting="accent" data-value="parchment">
+                    <span class="swatch parchment"></span>
+                    <strong>Parchment</strong>
+                  </button>
+                </div>
+              </div>
+            </article>
+
+            <article class="panel settings-panel">
+              <div class="setting-group">
+                <div>
+                  <h3>Reading Comfort</h3>
+                  <p>Adjust text and spacing without changing the whole design.</p>
+                </div>
+                <div class="settings-stack">
+                  <div class="setting-row">
+                    <span>Text</span>
+                    <div class="segmented-control setting-control small" role="group" aria-label="Text size">
+                      <button type="button" data-setting="textScale" data-value="standard">Standard</button>
+                      <button type="button" data-setting="textScale" data-value="large">Large</button>
+                      <button type="button" data-setting="textScale" data-value="xl">XL</button>
+                    </div>
+                  </div>
+                  <div class="setting-row">
+                    <span>Spacing</span>
+                    <div class="segmented-control setting-control small" role="group" aria-label="Spacing">
+                      <button type="button" data-setting="density" data-value="compact">Compact</button>
+                      <button type="button" data-setting="density" data-value="comfortable">Comfort</button>
+                      <button type="button" data-setting="density" data-value="spacious">Spacious</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="setting-group">
+                <div>
+                  <h3>Atmosphere</h3>
+                  <p>Set how present the icon-inspired backdrop should feel.</p>
+                </div>
+                <div class="settings-stack">
+                  <div class="setting-row">
+                    <span>Backdrop</span>
+                    <div class="segmented-control setting-control small" role="group" aria-label="Backdrop">
+                      <button type="button" data-setting="background" data-value="rich">Rich</button>
+                      <button type="button" data-setting="background" data-value="soft">Soft</button>
+                      <button type="button" data-setting="background" data-value="minimal">Minimal</button>
+                    </div>
+                  </div>
+                  <label class="toggle-row">
+                    <input id="reduce-motion-toggle" type="checkbox" />
+                    <span><strong>Quiet Motion</strong><small>Reduce hover movement and transitions.</small></span>
+                  </label>
+                </div>
+              </div>
+            </article>
+
+            <aside class="panel settings-preview" aria-live="polite">
+              <p class="eyebrow">Preview</p>
+              <h3 id="settings-preview-title">Byzantine Dark</h3>
+              <p id="settings-preview-copy">Gold accents, calm spacing, and a candlelit reading surface.</p>
+              <div class="preview-card">
+                <span class="metric-kicker">Daily rhythm</span>
+                <strong>Peaceful</strong>
+                <p>Calendar, readings, prayer, and study stay familiar while the look adapts to you.</p>
+              </div>
+            </aside>
+          </div>
+        </section>
+
         <section id="legal" class="view-section">
           <div class="section-heading wide">
             <div>
@@ -366,7 +492,7 @@
               <h3>Privacy Policy</h3>
               <p><strong>Controller:</strong> Orthodox Companion / rg-ru OC-project. This is a public prototype hosted on GitHub Pages. Replace this line with the full legal name, postal address, and contact email of the operator before a commercial or public launch beyond this prototype.</p>
               <p><strong>Purpose:</strong> The site provides an Orthodox Christian companion experience: fasting calendar, readings, study progress, prayer wall preview, church finder, and source-backed assistant prototype.</p>
-              <p><strong>Data processed in this web release:</strong> app settings, consent choices, theme, jurisdiction, bookmarks, local reading progress, local notes, local prayer preview entries, local chat history, and optional browser geolocation for church sorting.</p>
+              <p><strong>Data processed in this web release:</strong> app settings, consent choices, theme, accent palette, reading comfort preferences, jurisdiction, bookmarks, local reading progress, local notes, local prayer preview entries, local chat history, and optional browser geolocation for church sorting.</p>
               <p><strong>Location:</strong> Location is requested only after the user clicks Find Near Me, accepts the in-app location notice, and grants the browser permission. Coordinates are used once in the browser to sort sample churches by distance. Coordinates are not stored, not sent to a backend, and not shared by this static site.</p>
               <p><strong>Legal basis:</strong> essential local storage is used to provide features requested by the user. Optional location is based on consent. Future analytics, marketing, community accounts, Firebase sync, or AI backend processing must remain off until a specific consent and production privacy notice are in place.</p>
               <p><strong>Storage period:</strong> local app data remains in the user's browser until the user clears browser storage or uses the controls in this app. Consent choices are remembered for 180 days unless changed earlier.</p>
@@ -384,7 +510,7 @@
                 </div>
                 <div role="row">
                   <strong role="cell">Preferences</strong>
-                  <span role="cell">Theme, jurisdiction, progress, bookmarks, notes, and local-only personalization.</span>
+                  <span role="cell">Theme, accent palette, text size, spacing, backdrop, motion preference, jurisdiction, progress, bookmarks, notes, and local-only personalization.</span>
                 </div>
                 <div role="row">
                   <strong role="cell">Location</strong>
@@ -428,6 +554,7 @@
           <a href="#cookie-policy">Cookies</a>
           <a href="#terms">Terms</a>
           <a href="#imprint">Imprint</a>
+          <a href="#settings">Settings</a>
           <button class="link-button" id="footer-consent-settings" type="button">Cookie Settings</button>
         </footer>
       </main>

@@ -2,16 +2,50 @@
   "name": "Orthodox Companion",
   "short_name": "Orthodox",
   "description": "A reverent Orthodox Christian web companion for fasting, readings, feasts, study, prayer, and source-backed guidance.",
-  "start_url": ".",
+  "id": "/OC-project/",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait-primary",
   "background_color": "#11100e",
   "theme_color": "#16120d",
+  "categories": ["education", "lifestyle", "books"],
   "icons": [
     {
-      "src": "assets/byzantine-hero.png",
-      "sizes": "1536x1024",
+      "src": "assets/app-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/app-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/app-icon-1024.png",
+      "sizes": "1024x1024",
       "type": "image/png",
       "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Today",
+      "url": "./#overview",
+      "icons": [{ "src": "assets/app-icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "Calendar",
+      "url": "./#calendar",
+      "icons": [{ "src": "assets/app-icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "Settings",
+      "url": "./#settings",
+      "icons": [{ "src": "assets/app-icon-192.png", "sizes": "192x192", "type": "image/png" }]
     }
   ]
 }

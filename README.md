@@ -1,6 +1,6 @@
 # Orthodox Companion Web
 
-Orthodox Companion is a web-first Progressive Web App for Eastern Orthodox Christian daily life. This first release turns the product brief into a hosted website with a responsive app shell, offline support, fasting calendar logic, feast countdowns, daily readings, quote generation, study progress, prayer requests, a church finder, library surfaces, a source-backed assistant prototype, admin surfaces, and GitHub Pages deployment automation.
+Orthodox Companion is a web-first Progressive Web App for Eastern Orthodox Christian daily life. This first release turns the product brief into a hosted website with a responsive app shell, app-style install metadata, offline support, fasting calendar logic, feast countdowns, daily readings, quote generation, study progress, prayer requests, a church finder, library surfaces, a source-backed assistant prototype, admin surfaces, personalization settings, and GitHub Pages deployment automation.
 
 ## Live Site
 
@@ -22,6 +22,8 @@ Then open `http://localhost:4173`.
 ```text
 .
 ├── assets/
+│   ├── app-icon-*.png
+│   ├── apple-touch-icon.png
 │   └── byzantine-hero.png
 ├── docs/
 │   ├── api-design.md
@@ -50,6 +52,8 @@ Then open `http://localhost:4173`.
 - Prayer request wall with anonymous requests, prayer counters, and moderation queue surface.
 - Source-backed AI Orthodox Assistant prototype with approved-source model.
 - Admin dashboard surfaces for content, moderation, and API health.
+- Personalization settings for theme, accent palette, reading comfort, spacing, background strength, and reduced motion.
+- iOS/Android install metadata, square app icons, mobile bottom navigation, safe-area spacing, and glass-style app surfaces.
 - Cookie/local-storage consent, separate location consent for Church Finder, legal center, local data deletion, PWA manifest, service worker cache, responsive dark/light design, and GitHub Pages CI/CD.
 
 ## Legal and Privacy

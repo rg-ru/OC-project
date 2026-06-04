@@ -75,9 +75,78 @@ function consentAllows(category) {
   return Boolean(getConsent()[category]);
 }
 
+const PERSONALIZATION_DEFAULTS = {
+  theme: "dark",
+  accent: "gold",
+  textScale: "standard",
+  density: "comfortable",
+  background: "rich",
+  motion: "normal",
+};
+
+const PERSONALIZATION_STORAGE_KEYS = {
+  theme: "oc:theme",
+  accent: "oc:accent",
+  textScale: "oc:textScale",
+  density: "oc:density",
+  background: "oc:background",
+  motion: "oc:motion",
+};
+
+const PERSONALIZATION_OPTIONS = {
+  theme: ["dark", "light", "system"],
+  accent: ["gold", "green", "blue", "ruby", "violet", "parchment"],
+  textScale: ["standard", "large", "xl"],
+  density: ["compact", "comfortable", "spacious"],
+  background: ["rich", "soft", "minimal"],
+  motion: ["normal", "reduced"],
+};
+
+const PERSONALIZATION_COPY = {
+  accent: {
+    gold: { label: "Byzantine", copy: "Gold accents, warm panels, and a candlelit reading surface." },
+    green: { label: "Olive", copy: "Olive accents with a grounded, garden-like calm." },
+    blue: { label: "Aegean", copy: "Sea-blue accents with crisp contrast and a quieter glow." },
+    ruby: { label: "Ruby", copy: "Deep red accents with a feast-day warmth." },
+    violet: { label: "Violet", copy: "Soft violet accents for a contemplative evening feel." },
+    parchment: { label: "Parchment", copy: "Muted ink and parchment accents for gentle reading." },
+  },
+  theme: {
+    dark: "Dark",
+    light: "Light",
+    system: "System",
+  },
+  textScale: {
+    standard: "standard text",
+    large: "larger text",
+    xl: "extra-large text",
+  },
+  density: {
+    compact: "compact spacing",
+    comfortable: "comfortable spacing",
+    spacious: "spacious spacing",
+  },
+  background: {
+    rich: "rich background",
+    soft: "soft background",
+    minimal: "minimal background",
+  },
+};
+
+function readPersonalization(setting) {
+  const fallback = PERSONALIZATION_DEFAULTS[setting];
+  const value = readStorage(PERSONALIZATION_STORAGE_KEYS[setting], fallback);
+  return PERSONALIZATION_OPTIONS[setting].includes(value) ? value : fallback;
+}
+
 const state = {
   jurisdiction: readStorage("oc:j", "antiochian"),
-  theme: readStorage("oc:theme", "dark"),
+  theme: readPersonalization("theme"),
+  accent: readPersonalization("accent"),
+  textScale: readPersonalization("textScale"),
+  density: readPersonalization("density"),
+  background: readPersonalization("background"),
+  motion: readPersonalization("motion"),
   selectedDate: new Date(),
   quoteIndex: Number(readStorage("oc:quote", "0")),
   calendarMode: "month",
@@ -808,6 +877,11 @@ function renderReadingsView() {
 const LOCAL_APP_DATA_KEYS = [
   "oc:j",
   "oc:theme",
+  "oc:accent",
+  "oc:textScale",
+  "oc:density",
+  "oc:background",
+  "oc:motion",
   "oc:quote",
   "oc:lessons",
   "oc:quiz",
@@ -857,12 +931,12 @@ function applyConsentChoice(nextConsent) {
 function clearLocalAppData() {
   LOCAL_APP_DATA_KEYS.forEach(removeStorage);
   state.jurisdiction = "antiochian";
-  state.theme = "dark";
+  Object.assign(state, PERSONALIZATION_DEFAULTS);
   state.quoteIndex = 0;
   state.plan = "new-testament";
   state.userPosition = null;
   $("#jurisdiction-select").value = state.jurisdiction;
-  applyTheme();
+  applyPersonalization();
   renderAll();
 }
 
@@ -884,9 +958,10 @@ function initEvents() {
   });
 
   $("#theme-toggle").addEventListener("click", () => {
-    state.theme = document.body.classList.contains("light") ? "dark" : "light";
+    state.theme = effectiveTheme() === "light" ? "dark" : "light";
     writeStorage("oc:theme", state.theme);
-    applyTheme();
+    applyPersonalization();
+    renderSettings();
   });
 
   $("#new-quote").addEventListener("click", () => {
@@ -1014,6 +1089,31 @@ function initEvents() {
 
   $("#global-search").addEventListener("input", renderGlobalSearch);
 
+  $$("[data-setting]").forEach((button) => {
+    button.addEventListener("click", () => {
+      updateSetting(button.dataset.setting, button.dataset.value);
+    });
+  });
+
+  $("#reduce-motion-toggle").addEventListener("change", (event) => {
+    updateSetting("motion", event.target.checked ? "reduced" : "normal");
+  });
+
+  $("#reset-personalization").addEventListener("click", resetPersonalization);
+
+  const systemThemeQuery = window.matchMedia?.("(prefers-color-scheme: light)");
+  const handleSystemThemeChange = () => {
+    if (state.theme === "system") {
+      applyPersonalization();
+      renderSettings();
+    }
+  };
+  if (systemThemeQuery?.addEventListener) {
+    systemThemeQuery.addEventListener("change", handleSystemThemeChange);
+  } else if (systemThemeQuery?.addListener) {
+    systemThemeQuery.addListener(handleSystemThemeChange);
+  }
+
   $$(".nav-link").forEach((link) => {
     link.addEventListener("click", () => {
       $$(".nav-link").forEach((item) => item.classList.remove("active"));
@@ -1106,11 +1206,68 @@ function renderGlobalSearch() {
             `<a class="result-item" href="${item.href}"><h4>${escapeHtml(item.title)}</h4><p>${escapeHtml(item.meta)}</p><p>${escapeHtml(item.detail)}</p></a>`,
         )
         .join("")
-    : `<div class="result-item"><h4>No results</h4><p>Try a feast, saint, church, topic, or reading.</p></div>`;
+      : `<div class="result-item"><h4>No results</h4><p>Try a feast, saint, church, topic, or reading.</p></div>`;
+}
+
+function getSystemTheme() {
+  return window.matchMedia?.("(prefers-color-scheme: light)").matches ? "light" : "dark";
+}
+
+function effectiveTheme() {
+  return state.theme === "system" ? getSystemTheme() : state.theme;
 }
 
 function applyTheme() {
-  document.body.classList.toggle("light", state.theme === "light");
+  const resolvedTheme = effectiveTheme();
+  document.body.classList.toggle("light", resolvedTheme === "light");
+  document.body.dataset.theme = state.theme;
+  document.body.dataset.resolvedTheme = resolvedTheme;
+}
+
+function applyPersonalization() {
+  document.body.dataset.accent = state.accent;
+  document.body.dataset.text = state.textScale;
+  document.body.dataset.density = state.density;
+  document.body.dataset.background = state.background;
+  document.body.classList.toggle("reduce-motion", state.motion === "reduced");
+  applyTheme();
+}
+
+function renderSettings() {
+  const previewTitle = $("#settings-preview-title");
+  const previewCopy = $("#settings-preview-copy");
+  if (!previewTitle || !previewCopy) return;
+
+  $$("[data-setting]").forEach((button) => {
+    const isActive = state[button.dataset.setting] === button.dataset.value;
+    button.classList.toggle("active", isActive);
+    button.setAttribute("aria-pressed", String(isActive));
+  });
+
+  $("#reduce-motion-toggle").checked = state.motion === "reduced";
+
+  const accent = PERSONALIZATION_COPY.accent[state.accent] || PERSONALIZATION_COPY.accent.gold;
+  const themeLabel = state.theme === "system" ? `System ${PERSONALIZATION_COPY.theme[effectiveTheme()]}` : PERSONALIZATION_COPY.theme[state.theme];
+  const motionLabel = state.motion === "reduced" ? "quiet motion" : "gentle motion";
+  previewTitle.textContent = `${accent.label} ${themeLabel}`;
+  previewCopy.textContent = `${accent.copy} Uses ${PERSONALIZATION_COPY.textScale[state.textScale]}, ${PERSONALIZATION_COPY.density[state.density]}, ${PERSONALIZATION_COPY.background[state.background]}, and ${motionLabel}.`;
+}
+
+function updateSetting(setting, value) {
+  if (!PERSONALIZATION_OPTIONS[setting]?.includes(value)) return;
+  state[setting] = value;
+  writeStorage(PERSONALIZATION_STORAGE_KEYS[setting], value);
+  applyPersonalization();
+  renderSettings();
+}
+
+function resetPersonalization() {
+  Object.entries(PERSONALIZATION_DEFAULTS).forEach(([setting, value]) => {
+    state[setting] = value;
+    writeStorage(PERSONALIZATION_STORAGE_KEYS[setting], value);
+  });
+  applyPersonalization();
+  renderSettings();
 }
 
 function renderAll() {
@@ -1122,6 +1279,7 @@ function renderAll() {
   renderPrayers();
   renderAssistant();
   renderAdmin();
+  renderSettings();
 }
 
 function registerServiceWorker() {
@@ -1130,7 +1288,7 @@ function registerServiceWorker() {
   }
 }
 
-applyTheme();
+applyPersonalization();
 initEvents();
 renderConsentBanner();
 renderAll();
