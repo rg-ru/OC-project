@@ -75,13 +75,13 @@ for (const marker of ["consent-banner", "location-modal", "privacy-policy", "coo
   }
 }
 
-for (const marker of ["settings-preview-title", "data-setting=\"accent\"", "data-setting=\"appLanguage\"", "data-setting=\"simpleMode\"", "reduce-motion-toggle"]) {
+for (const marker of ["settings-preview-title", "data-setting=\"accent\"", "data-setting=\"appLanguage\"", "data-setting=\"simpleMode\"", "data-color-setting=\"customAccent\"", "reduce-motion-toggle"]) {
   if (!html.includes(marker)) {
     failures.push(`Missing settings marker ${marker}`);
   }
 }
 
-for (const marker of ["nav-icon", "simple-v8"]) {
+for (const marker of ["nav-icon", "apple-v9"]) {
   if (!html.includes(marker)) {
     failures.push(`Missing iPhone app shell marker ${marker}`);
   }
@@ -102,6 +102,7 @@ if (!css.includes("--gold")) failures.push("Design tokens missing");
 if (!css.includes("safe-area-inset-bottom")) failures.push("Mobile safe-area styling missing");
 if (!css.includes("--tabbar-height")) failures.push("Mobile tab bar token missing");
 if (!css.includes("body[data-simple=\"on\"]")) failures.push("Simple mode styling missing");
+if (!css.includes("body[data-accent=\"custom\"]")) failures.push("Custom color styling missing");
 
 if (failures.length > 0) {
   console.error(failures.join("\n"));

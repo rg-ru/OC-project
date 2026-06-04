@@ -79,7 +79,7 @@ const PERSONALIZATION_DEFAULTS = {
   appLanguage: "en",
   simpleMode: "off",
   theme: "dark",
-  accent: "gold",
+  accent: "system",
   textScale: "standard",
   density: "comfortable",
   background: "rich",
@@ -101,7 +101,7 @@ const PERSONALIZATION_OPTIONS = {
   appLanguage: ["en", "de", "ru", "el", "sr", "ro"],
   simpleMode: ["off", "on"],
   theme: ["dark", "light", "system"],
-  accent: ["gold", "green", "blue", "ruby", "violet", "parchment"],
+  accent: ["system", "custom", "gold", "green", "blue", "ruby", "violet", "parchment"],
   textScale: ["standard", "large", "xl"],
   density: ["compact", "comfortable", "spacious"],
   background: ["rich", "soft", "minimal"],
@@ -110,6 +110,8 @@ const PERSONALIZATION_OPTIONS = {
 
 const PERSONALIZATION_COPY = {
   accent: {
+    system: { label: "System", copy: "Apple-style system blue with clean, familiar controls." },
+    custom: { label: "Custom", copy: "Your own colors for the app accent, background, cards, and text." },
     gold: { label: "Byzantine", copy: "Gold accents, warm panels, and a candlelit reading surface." },
     green: { label: "Olive", copy: "Olive accents with a grounded, garden-like calm." },
     blue: { label: "Aegean", copy: "Sea-blue accents with crisp contrast and a quieter glow." },
@@ -137,6 +139,20 @@ const PERSONALIZATION_COPY = {
     soft: "soft background",
     minimal: "minimal background",
   },
+};
+
+const CUSTOM_COLOR_DEFAULTS = {
+  customAccent: "#007aff",
+  customBackground: "#f2f2f7",
+  customSurface: "#ffffff",
+  customText: "#1c1c1e",
+};
+
+const CUSTOM_COLOR_STORAGE_KEYS = {
+  customAccent: "oc:customAccent",
+  customBackground: "oc:customBackground",
+  customSurface: "oc:customSurface",
+  customText: "oc:customText",
 };
 
 const SIMPLE_MODE_DEFAULTS = {
@@ -184,7 +200,14 @@ const APP_TRANSLATIONS = {
     "settings.theme.title": "Theme",
     "settings.theme.body": "Choose the light level that feels easiest to read.",
     "settings.color.title": "Color",
-    "settings.color.body": "Keep the Orthodox gold, or soften the space with another accent.",
+    "settings.color.body": "Use Apple system blue, choose a reverent palette, or define your own colors.",
+    "settings.custom.title": "Custom Colors",
+    "settings.custom.body": "Pick your own accent, background, card, and text colors.",
+    "settings.custom.accent": "Accent",
+    "settings.custom.background": "Background",
+    "settings.custom.surface": "Cards",
+    "settings.custom.text": "Text",
+    "settings.custom.hint": "For readability, keep strong contrast between text and background.",
     "settings.comfort.title": "Reading Comfort",
     "settings.comfort.body": "Adjust text and spacing without changing the whole design.",
     "settings.comfort.text": "Text",
@@ -201,6 +224,8 @@ const APP_TRANSLATIONS = {
     "theme.dark": "Dark",
     "theme.light": "Light",
     "theme.system": "System",
+    "accent.system": "System Blue",
+    "accent.custom": "Custom",
     "accent.gold": "Byzantine",
     "accent.green": "Olive",
     "accent.blue": "Aegean",
@@ -258,7 +283,14 @@ const APP_TRANSLATIONS = {
     "settings.theme.title": "Design",
     "settings.theme.body": "Wähle die Helligkeit, die sich am besten lesen lässt.",
     "settings.color.title": "Farbe",
-    "settings.color.body": "Behalte orthodoxes Gold oder wähle einen ruhigeren Akzent.",
+    "settings.color.body": "Nutze Apple-Systemblau, wähle eine ruhige Palette oder lege eigene Farben fest.",
+    "settings.custom.title": "Eigene Farben",
+    "settings.custom.body": "Wähle Akzent, Hintergrund, Kartenfarbe und Textfarbe selbst.",
+    "settings.custom.accent": "Akzent",
+    "settings.custom.background": "Hintergrund",
+    "settings.custom.surface": "Karten",
+    "settings.custom.text": "Text",
+    "settings.custom.hint": "Für gute Lesbarkeit sollte Text deutlich mit dem Hintergrund kontrastieren.",
     "settings.comfort.title": "Lesekomfort",
     "settings.comfort.body": "Passe Schrift und Abstand an, ohne das ganze Design zu ändern.",
     "settings.comfort.text": "Text",
@@ -275,6 +307,8 @@ const APP_TRANSLATIONS = {
     "theme.dark": "Dunkel",
     "theme.light": "Hell",
     "theme.system": "System",
+    "accent.system": "Systemblau",
+    "accent.custom": "Eigene Farben",
     "accent.gold": "Byzantinisch",
     "accent.green": "Olive",
     "accent.blue": "Ägäis",
@@ -332,7 +366,14 @@ const APP_TRANSLATIONS = {
     "settings.theme.title": "Тема",
     "settings.theme.body": "Выберите освещение, которое легче читать.",
     "settings.color.title": "Цвет",
-    "settings.color.body": "Оставьте православное золото или выберите более мягкий акцент.",
+    "settings.color.body": "Используйте системный синий Apple, спокойную палитру или свои цвета.",
+    "settings.custom.title": "Свои цвета",
+    "settings.custom.body": "Выберите цвет акцента, фона, карточек и текста.",
+    "settings.custom.accent": "Акцент",
+    "settings.custom.background": "Фон",
+    "settings.custom.surface": "Карточки",
+    "settings.custom.text": "Текст",
+    "settings.custom.hint": "Для чтения нужен сильный контраст между текстом и фоном.",
     "settings.comfort.title": "Комфорт чтения",
     "settings.comfort.body": "Настройте текст и интервалы, не меняя весь дизайн.",
     "settings.comfort.text": "Текст",
@@ -349,6 +390,8 @@ const APP_TRANSLATIONS = {
     "theme.dark": "Тёмная",
     "theme.light": "Светлая",
     "theme.system": "Система",
+    "accent.system": "Системный синий",
+    "accent.custom": "Свои цвета",
     "accent.gold": "Византийский",
     "accent.green": "Олива",
     "accent.blue": "Эгейский",
@@ -437,6 +480,14 @@ function readPersonalization(setting) {
   return PERSONALIZATION_OPTIONS[setting].includes(value) ? value : fallback;
 }
 
+function normalizeColor(value, fallback) {
+  return /^#[0-9a-f]{6}$/i.test(value || "") ? value.toLowerCase() : fallback;
+}
+
+function readCustomColor(setting) {
+  return normalizeColor(readStorage(CUSTOM_COLOR_STORAGE_KEYS[setting], CUSTOM_COLOR_DEFAULTS[setting]), CUSTOM_COLOR_DEFAULTS[setting]);
+}
+
 const state = {
   jurisdiction: readStorage("oc:j", "antiochian"),
   appLanguage: readPersonalization("appLanguage"),
@@ -447,6 +498,10 @@ const state = {
   density: readPersonalization("density"),
   background: readPersonalization("background"),
   motion: readPersonalization("motion"),
+  customAccent: readCustomColor("customAccent"),
+  customBackground: readCustomColor("customBackground"),
+  customSurface: readCustomColor("customSurface"),
+  customText: readCustomColor("customText"),
   selectedDate: new Date(),
   quoteIndex: Number(readStorage("oc:quote", "0")),
   calendarMode: "month",
@@ -1209,6 +1264,10 @@ const LOCAL_APP_DATA_KEYS = [
   "oc:density",
   "oc:background",
   "oc:motion",
+  "oc:customAccent",
+  "oc:customBackground",
+  "oc:customSurface",
+  "oc:customText",
   "oc:quote",
   "oc:lessons",
   "oc:quiz",
@@ -1259,6 +1318,7 @@ function clearLocalAppData() {
   LOCAL_APP_DATA_KEYS.forEach(removeStorage);
   state.jurisdiction = "antiochian";
   Object.assign(state, PERSONALIZATION_DEFAULTS);
+  Object.assign(state, CUSTOM_COLOR_DEFAULTS);
   state.quoteIndex = 0;
   state.plan = "new-testament";
   state.userPosition = null;
@@ -1422,6 +1482,12 @@ function initEvents() {
     });
   });
 
+  $$("[data-color-setting]").forEach((input) => {
+    input.addEventListener("input", (event) => {
+      updateCustomColor(input.dataset.colorSetting, event.target.value);
+    });
+  });
+
   $("#reduce-motion-toggle").addEventListener("change", (event) => {
     updateSetting("motion", event.target.checked ? "reduced" : "normal");
   });
@@ -1575,7 +1641,20 @@ function applyTheme() {
   document.body.dataset.resolvedTheme = resolvedTheme;
 }
 
+function applyCustomColors() {
+  const variables = {
+    "--custom-accent": state.customAccent,
+    "--custom-background": state.customBackground,
+    "--custom-surface": state.customSurface,
+    "--custom-text": state.customText,
+  };
+  Object.entries(variables).forEach(([name, value]) => {
+    document.documentElement.style.setProperty(name, value);
+  });
+}
+
 function applyPersonalization() {
+  applyCustomColors();
   document.body.dataset.simple = state.simpleMode;
   document.body.dataset.accent = state.accent;
   document.body.dataset.text = state.textScale;
@@ -1597,6 +1676,7 @@ function renderSettings() {
   });
 
   $("#reduce-motion-toggle").checked = state.motion === "reduced";
+  renderCustomColorControls();
 
   const themeLabel = state.theme === "system" ? `${t("theme.system")} ${t(`theme.${effectiveTheme()}`)}` : t(`theme.${state.theme}`);
   const template = state.simpleMode === "on" ? "preview.copy.simple" : "preview.copy.standard";
@@ -1607,6 +1687,17 @@ function renderSettings() {
     spacing: t(`preview.density.${state.density}`),
     background: t(`preview.background.${state.background}`),
     motion: t(`motion.${state.motion}`),
+  });
+}
+
+function renderCustomColorControls() {
+  $$("[data-color-setting]").forEach((input) => {
+    const setting = input.dataset.colorSetting;
+    const color = state[setting] || CUSTOM_COLOR_DEFAULTS[setting];
+    input.value = color;
+    input.style.setProperty("--picked-color", color);
+    const valueLabel = input.closest(".color-input-row")?.querySelector(".color-value");
+    if (valueLabel) valueLabel.textContent = color.toUpperCase();
   });
 }
 
@@ -1629,10 +1720,26 @@ function updateSetting(setting, value) {
   }
 }
 
+function updateCustomColor(setting, value) {
+  if (!CUSTOM_COLOR_STORAGE_KEYS[setting]) return;
+  const nextColor = normalizeColor(value, CUSTOM_COLOR_DEFAULTS[setting]);
+  state[setting] = nextColor;
+  state.accent = "custom";
+  writeStorage(CUSTOM_COLOR_STORAGE_KEYS[setting], nextColor);
+  writeStorage(PERSONALIZATION_STORAGE_KEYS.accent, state.accent);
+  applyPersonalization();
+  renderSettings();
+  applyLanguage();
+}
+
 function resetPersonalization() {
   Object.entries(PERSONALIZATION_DEFAULTS).forEach(([setting, value]) => {
     state[setting] = value;
     writeStorage(PERSONALIZATION_STORAGE_KEYS[setting], value);
+  });
+  Object.entries(CUSTOM_COLOR_DEFAULTS).forEach(([setting, value]) => {
+    state[setting] = value;
+    writeStorage(CUSTOM_COLOR_STORAGE_KEYS[setting], value);
   });
   applyPersonalization();
   renderAll();

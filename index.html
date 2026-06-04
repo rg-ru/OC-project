@@ -15,10 +15,10 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="format-detection" content="telephone=no" />
     <title>Orthodox Companion</title>
-    <link rel="manifest" href="site.webmanifest?v=simple-v8" />
+    <link rel="manifest" href="site.webmanifest?v=apple-v9" />
     <link rel="icon" href="assets/app-icon-192.png" />
     <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
-    <link rel="stylesheet" href="styles.css?v=simple-v8" />
+    <link rel="stylesheet" href="styles.css?v=apple-v9" />
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -445,6 +445,14 @@
                   <p data-i18n="settings.color.body">Keep the Orthodox gold, or soften the space with another accent.</p>
                 </div>
                 <div class="swatch-grid" role="group" aria-label="Accent color">
+                  <button class="swatch-button" type="button" data-setting="accent" data-value="system">
+                    <span class="swatch system"></span>
+                    <strong data-i18n="accent.system">System Blue</strong>
+                  </button>
+                  <button class="swatch-button" type="button" data-setting="accent" data-value="custom">
+                    <span class="swatch custom"></span>
+                    <strong data-i18n="accent.custom">Custom</strong>
+                  </button>
                   <button class="swatch-button" type="button" data-setting="accent" data-value="gold">
                     <span class="swatch gold"></span>
                     <strong data-i18n="accent.gold">Byzantine</strong>
@@ -470,6 +478,36 @@
                     <strong data-i18n="accent.parchment">Parchment</strong>
                   </button>
                 </div>
+              </div>
+
+              <div class="setting-group">
+                <div>
+                  <h3 data-i18n="settings.custom.title">Custom Colors</h3>
+                  <p data-i18n="settings.custom.body">Pick your own accent, background, card, and text colors.</p>
+                </div>
+                <div class="custom-color-grid">
+                  <label class="color-input-row">
+                    <span data-i18n="settings.custom.accent">Accent</span>
+                    <input type="color" data-color-setting="customAccent" value="#007aff" />
+                    <strong class="color-value">#007AFF</strong>
+                  </label>
+                  <label class="color-input-row">
+                    <span data-i18n="settings.custom.background">Background</span>
+                    <input type="color" data-color-setting="customBackground" value="#f2f2f7" />
+                    <strong class="color-value">#F2F2F7</strong>
+                  </label>
+                  <label class="color-input-row">
+                    <span data-i18n="settings.custom.surface">Cards</span>
+                    <input type="color" data-color-setting="customSurface" value="#ffffff" />
+                    <strong class="color-value">#FFFFFF</strong>
+                  </label>
+                  <label class="color-input-row">
+                    <span data-i18n="settings.custom.text">Text</span>
+                    <input type="color" data-color-setting="customText" value="#1c1c1e" />
+                    <strong class="color-value">#1C1C1E</strong>
+                  </label>
+                </div>
+                <p class="setting-hint" data-i18n="settings.custom.hint">For readability, keep strong contrast between text and background.</p>
               </div>
             </article>
 
@@ -685,6 +723,6 @@
       </section>
     </div>
 
-    <script src="script.js?v=simple-v8" defer></script>
+    <script src="script.js?v=apple-v9" defer></script>
   </body>
 </html>
