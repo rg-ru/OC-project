@@ -1,6 +1,6 @@
 # Orthodox Companion Web
 
-Orthodox Companion is a web-first Progressive Web App for Eastern Orthodox Christian daily life. This first release turns the product brief into a hosted website with an iOS 26-inspired Liquid Glass app shell, app-style install metadata, offline support, fasting calendar logic, feast countdowns, daily readings, quote generation, study progress, prayer requests, a church finder, library surfaces, a source-backed assistant prototype, admin surfaces, simple-view personalization, custom colors, language settings, and GitHub Pages deployment automation.
+Orthodox Companion is a web-first Progressive Web App for Eastern Orthodox Christian daily life. This first release turns the product brief into a hosted website with an iOS 26-inspired Liquid Glass app shell, app-style install metadata, optional account UX, admin-only surfaces, offline support, fasting calendar logic, feast countdowns, daily readings, quote generation, study progress, prayer requests, a church finder, library surfaces, a source-backed assistant prototype, simple-view personalization, custom colors, language settings, and GitHub Pages deployment automation.
 
 ## Live Site
 
@@ -57,6 +57,8 @@ Then open `http://localhost:4173`.
 - Senior-friendly simple mode with larger text, clearer touch targets, calmer backgrounds, reduced motion, and easier mobile navigation.
 - App language selector for English, German, Russian, Greek, Serbian, and Romanian, with the core shell translated and safe English fallback for untranslated detail labels.
 - iOS 26-inspired Liquid Glass navigation and controls, icon tab navigation, iOS/Android install metadata, square app icons, mobile safe-area spacing, a brighter Apple-system default look, clean grouped settings, and quiet content surfaces.
+- Optional Account tab with Google, Apple, and email sign-in UX, local demo sessions, member/admin roles, and a Firebase-ready custom-claims model.
+- Admin-only dashboard for education source management, moderation, content review, API health, and adding approved Assistant teaching cards that normal accounts cannot access.
 - Cookie/local-storage consent, separate location consent for Church Finder, legal center, local data deletion, PWA manifest, service worker cache, responsive dark/light design, and GitHub Pages CI/CD.
 
 ## Legal and Privacy
@@ -90,6 +92,7 @@ Planned core modules:
 Planned platform capabilities:
 
 - User accounts, cloud sync, push notifications, offline mode, global search, analytics, user profiles, admin dashboard, and dark/light themes.
+- The current static website simulates auth locally for UX and role-gating. Production should connect Firebase Authentication providers, assign admin access through server-side custom claims, and protect Firestore/Cloud Functions with role-based security rules.
 - Multilingual support for English, German, Russian, Greek, Serbian, and Romanian.
 - Firebase Authentication, Firestore, Cloud Functions, Cloud Storage, and Firebase Messaging.
 - RAG architecture with a vector database, approved Orthodox source library, and source citation system.

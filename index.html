@@ -15,10 +15,10 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="format-detection" content="telephone=no" />
     <title>Orthodox Companion</title>
-    <link rel="manifest" href="site.webmanifest?v=ios26-v11" />
+    <link rel="manifest" href="site.webmanifest?v=ios26-v12" />
     <link rel="icon" href="assets/app-icon-192.png" />
     <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
-    <link rel="stylesheet" href="styles.css?v=ios26-v11" />
+    <link rel="stylesheet" href="styles.css?v=ios26-v12" />
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -67,6 +67,10 @@
             <svg class="nav-icon" viewBox="0 0 24 24" role="img"><path d="M5 6h14v10H9l-4 4zM9 10h6M9 13h4" /></svg>
             <span class="nav-label" data-i18n="nav.assistant">Assistant</span>
           </a>
+          <a href="#account" class="nav-link">
+            <svg class="nav-icon" viewBox="0 0 24 24" role="img"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0" /></svg>
+            <span class="nav-label" data-i18n="nav.account">Account</span>
+          </a>
           <a href="#admin" class="nav-link">
             <svg class="nav-icon" viewBox="0 0 24 24" role="img"><path d="M12 3 5 6v5c0 4.4 2.8 7.4 7 10 4.2-2.6 7-5.6 7-10V6zM9 12l2 2 4-5" /></svg>
             <span class="nav-label" data-i18n="nav.admin">Admin</span>
@@ -112,6 +116,7 @@
             <button class="icon-button" id="theme-toggle" type="button" aria-label="Toggle light and dark theme" data-i18n-aria="aria.theme">
               <svg viewBox="0 0 24 24" role="img"><path d="M12 3v2M12 19v2M5.6 5.6 7 7M17 17l1.4 1.4M3 12h2M19 12h2M5.6 18.4 7 17M17 7l1.4-1.4" /><circle cx="12" cy="12" r="4" /></svg>
             </button>
+            <a class="account-pill" id="account-pill" href="#account">Sign in</a>
           </div>
         </header>
 
@@ -361,7 +366,79 @@
             </article>
             <aside class="panel source-card">
               <h3>Approved Source Library</h3>
+              <p class="muted-copy">The assistant can only use reviewed source cards. Admin-added education material appears here after approval.</p>
               <div id="source-list" class="result-list"></div>
+            </aside>
+          </div>
+        </section>
+
+        <section id="account" class="view-section">
+          <div class="section-heading wide">
+            <div>
+              <p class="eyebrow">Account</p>
+              <h2>Optional Sign In</h2>
+            </div>
+            <span class="status-chip" id="account-role-chip">Guest mode</span>
+          </div>
+          <div class="content-grid auth-layout">
+            <article class="panel auth-card" id="auth-panel">
+              <div id="signed-out-view">
+                <h3>Sign in to sync and unlock your role</h3>
+                <p class="muted-copy">Continue as a guest, or sign in with Google, Apple, or email. This web prototype stores the session locally; production should use Firebase Authentication.</p>
+                <div class="provider-grid">
+                  <button class="provider-button" type="button" data-auth-provider="google">
+                    <span class="provider-mark">G</span>
+                    <strong>Continue with Google</strong>
+                  </button>
+                  <button class="provider-button" type="button" data-auth-provider="apple">
+                    <span class="provider-mark">A</span>
+                    <strong>Continue with Apple</strong>
+                  </button>
+                </div>
+                <form id="email-auth-form" class="auth-form">
+                  <label for="auth-name">Name</label>
+                  <input id="auth-name" class="field" type="text" placeholder="Maria" autocomplete="name" />
+                  <label for="auth-email">Email</label>
+                  <input id="auth-email" class="field" type="email" placeholder="you@example.com" autocomplete="email" required />
+                  <button class="primary-action compact" type="submit">Continue with Email</button>
+                </form>
+                <p class="setting-hint">Demo admin account: sign in with admin@orthodox-companion.app. Real admin access must use Firebase custom claims.</p>
+              </div>
+              <div id="signed-in-view" hidden>
+                <div class="account-summary">
+                  <span class="account-avatar" id="account-avatar">OC</span>
+                  <div>
+                    <h3 id="account-name">Signed in</h3>
+                    <p id="account-email" class="muted-copy">Account email</p>
+                  </div>
+                </div>
+                <div class="role-card">
+                  <span class="metric-kicker">Role</span>
+                  <strong id="account-role">Member</strong>
+                  <p id="account-role-detail">Members can save progress and use community features. Admins can manage restricted content areas.</p>
+                </div>
+                <div class="button-row">
+                  <a class="primary-action compact" id="account-admin-link" href="#admin">Open Admin</a>
+                  <button class="text-button" id="sign-out" type="button">Sign Out</button>
+                </div>
+              </div>
+            </article>
+            <aside class="panel">
+              <h3>Production Auth Plan</h3>
+              <div class="result-list">
+                <div class="result-item">
+                  <h4>Firebase Authentication</h4>
+                  <p>Google, Apple, and email sign-in providers.</p>
+                </div>
+                <div class="result-item">
+                  <h4>Admin Custom Claims</h4>
+                  <p>Only server-assigned admin claims should unlock moderation, education source management, and analytics.</p>
+                </div>
+                <div class="result-item">
+                  <h4>Role-Based Firestore Rules</h4>
+                  <p>Normal accounts can read approved content. Admins can create drafts, approve sources, and moderate submissions.</p>
+                </div>
+              </div>
             </aside>
           </div>
         </section>
@@ -372,21 +449,51 @@
               <p class="eyebrow">Admin Dashboard</p>
               <h2>Content, Moderation, and API Health</h2>
             </div>
-            <span class="status-chip">Role-based access</span>
+            <span class="status-chip" id="admin-access-chip">Role-based access</span>
           </div>
-          <div class="content-grid three-column">
-            <article class="panel">
-              <h3>Content Queue</h3>
-              <div id="content-queue" class="result-list"></div>
-            </article>
-            <article class="panel">
-              <h3>Moderation</h3>
-              <div id="moderation-queue" class="result-list"></div>
-            </article>
-            <article class="panel">
-              <h3>Liturgical API</h3>
-              <div id="api-health" class="result-list"></div>
-            </article>
+          <div id="admin-locked" class="panel access-panel">
+            <h3>Admin sign in required</h3>
+            <p class="muted-copy">Normal accounts cannot view source management, moderation, or API operations. Sign in with an admin account to continue.</p>
+            <a class="primary-action compact" href="#account">Go to Sign In</a>
+          </div>
+          <div id="admin-dashboard" hidden>
+            <div class="content-grid admin-layout">
+              <article class="panel admin-source-panel">
+                <h3>Add Education Material for the Assistant</h3>
+                <p class="muted-copy">Create reviewed source cards for Orthodox education. Approved entries can be used by the assistant and shown with citations.</p>
+                <form id="admin-source-form" class="form-panel">
+                  <label for="admin-source-title">Title</label>
+                  <input id="admin-source-title" class="field" type="text" maxlength="80" placeholder="Holy Icons and Veneration" required />
+                  <label for="admin-source-topic">Topic</label>
+                  <input id="admin-source-topic" class="field" type="text" maxlength="50" placeholder="Catechism" required />
+                  <label for="admin-source-citation">Approved citation</label>
+                  <input id="admin-source-citation" class="field" type="text" maxlength="120" placeholder="Seventh Ecumenical Council, approved catechism notes" required />
+                  <label for="admin-source-body">Teaching summary</label>
+                  <textarea id="admin-source-body" required maxlength="420" placeholder="Short source-backed teaching for the assistant to retrieve."></textarea>
+                  <label class="checkbox-row">
+                    <input id="admin-source-approved" type="checkbox" checked />
+                    <span>Approve for assistant answers</span>
+                  </label>
+                  <button class="primary-action compact" type="submit">Add Source</button>
+                </form>
+              </article>
+              <article class="panel">
+                <h3>Assistant Education Sources</h3>
+                <div id="admin-source-list" class="result-list"></div>
+              </article>
+              <article class="panel">
+                <h3>Content Queue</h3>
+                <div id="content-queue" class="result-list"></div>
+              </article>
+              <article class="panel">
+                <h3>Moderation</h3>
+                <div id="moderation-queue" class="result-list"></div>
+              </article>
+              <article class="panel">
+                <h3>Liturgical API</h3>
+                <div id="api-health" class="result-list"></div>
+              </article>
+            </div>
           </div>
         </section>
 
@@ -586,12 +693,12 @@
               <h3>Privacy Policy</h3>
               <p><strong>Controller:</strong> Orthodox Companion / rg-ru OC-project. This is a public prototype hosted on GitHub Pages. Replace this line with the full legal name, postal address, and contact email of the operator before a commercial or public launch beyond this prototype.</p>
               <p><strong>Purpose:</strong> The site provides an Orthodox Christian companion experience: fasting calendar, readings, study progress, prayer wall preview, church finder, and source-backed assistant prototype.</p>
-              <p><strong>Data processed in this web release:</strong> app settings, consent choices, app language, simple-view preference, theme, accent palette, reading comfort preferences, jurisdiction, bookmarks, local reading progress, local notes, local prayer preview entries, local chat history, and optional browser geolocation for church sorting.</p>
+              <p><strong>Data processed in this web release:</strong> app settings, consent choices, app language, simple-view preference, theme, accent palette, reading comfort preferences, jurisdiction, bookmarks, local reading progress, local notes, local prayer preview entries, local chat history, optional local account session details, admin education source drafts, and optional browser geolocation for church sorting.</p>
               <p><strong>Location:</strong> Location is requested only after the user clicks Find Near Me, accepts the in-app location notice, and grants the browser permission. Coordinates are used once in the browser to sort sample churches by distance. Coordinates are not stored, not sent to a backend, and not shared by this static site.</p>
-              <p><strong>Legal basis:</strong> essential local storage is used to provide features requested by the user. Optional location is based on consent. Future analytics, marketing, community accounts, Firebase sync, or AI backend processing must remain off until a specific consent and production privacy notice are in place.</p>
+              <p><strong>Legal basis:</strong> essential local storage is used to provide features requested by the user. Optional account sign-in and location are based on user action and consent. Future analytics, marketing, Firebase sync, server-side community accounts, or AI backend processing must remain off until a specific consent and production privacy notice are in place.</p>
               <p><strong>Storage period:</strong> local app data remains in the user's browser until the user clears browser storage or uses the controls in this app. Consent choices are remembered for 180 days unless changed earlier.</p>
               <p><strong>User rights:</strong> where GDPR applies, users may request access, rectification, erasure, restriction, portability, objection, and withdrawal of consent. For this static prototype, most data is stored only in the user's own browser and can be deleted locally.</p>
-              <p><strong>Important:</strong> Prayer requests, assistant messages, notes, and religious preferences can be sensitive. The production app must add stronger account security, moderation, clergy/source review, export/deletion flows, and a reviewed legal notice before collecting this data on a server.</p>
+              <p><strong>Important:</strong> Prayer requests, assistant messages, notes, account roles, admin source material, and religious preferences can be sensitive. The production app must add Firebase Authentication, server-side admin claims, stronger account security, moderation, clergy/source review, export/deletion flows, and a reviewed legal notice before collecting this data on a server.</p>
             </article>
 
             <article class="panel legal-panel" id="cookie-policy">
@@ -600,11 +707,11 @@
               <div class="legal-table" role="table" aria-label="Storage overview">
                 <div role="row">
                   <strong role="cell">Necessary</strong>
-                  <span role="cell">Consent record, app shell, PWA cache, and feature state needed to deliver user-requested functions.</span>
+                  <span role="cell">Consent record, app shell, PWA cache, local demo session state, and feature state needed to deliver user-requested functions.</span>
                 </div>
                 <div role="row">
                   <strong role="cell">Preferences</strong>
-                  <span role="cell">Theme, accent palette, text size, spacing, backdrop, motion preference, jurisdiction, progress, bookmarks, notes, and local-only personalization.</span>
+                  <span role="cell">Theme, accent palette, text size, spacing, backdrop, motion preference, jurisdiction, progress, bookmarks, notes, local-only personalization, and admin education source drafts.</span>
                 </div>
                 <div role="row">
                   <strong role="cell">Location</strong>
@@ -626,7 +733,7 @@
               <h3>Terms of Use</h3>
               <p>Orthodox Companion is an educational and devotional software prototype. It is not a substitute for pastoral guidance, confession, medical advice, legal advice, emergency services, or direct communication with a parish.</p>
               <p>Calendar, fasting, readings, and church data may vary by jurisdiction and parish. Users should confirm fasting rules, services, pastoral questions, and sacramental matters with their priest or parish.</p>
-              <p>The assistant prototype must answer only from approved Orthodox sources in production and should refuse unsupported claims. Its current responses are illustrative and not authoritative.</p>
+              <p>The assistant prototype must answer only from approved Orthodox sources in production and should refuse unsupported claims. Admin-added education content requires clergy/editorial review before production use. Its current responses are illustrative and not authoritative.</p>
               <p>Users must not submit unlawful, abusive, defamatory, private, or sensitive information about others. Community prayer features require moderation before production launch.</p>
             </article>
 
@@ -723,6 +830,6 @@
       </section>
     </div>
 
-    <script src="script.js?v=ios26-v11" defer></script>
+    <script src="script.js?v=ios26-v12" defer></script>
   </body>
 </html>

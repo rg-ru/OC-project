@@ -30,6 +30,7 @@ const requiredSections = [
   "library",
   "community",
   "assistant",
+  "account",
   "admin",
   "settings",
   "legal",
@@ -81,9 +82,15 @@ for (const marker of ["settings-preview-title", "data-setting=\"accent\"", "data
   }
 }
 
-for (const marker of ["nav-icon", "ios26-v11"]) {
+for (const marker of ["nav-icon", "ios26-v12"]) {
   if (!html.includes(marker)) {
     failures.push(`Missing iPhone app shell marker ${marker}`);
+  }
+}
+
+for (const marker of ["email-auth-form", "admin-source-form", "admin-locked"]) {
+  if (!html.includes(marker)) {
+    failures.push(`Missing account/admin marker ${marker}`);
   }
 }
 

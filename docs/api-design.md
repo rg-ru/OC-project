@@ -85,6 +85,29 @@ Creates a moderated prayer request.
 
 Requires authentication. The request includes the question, language, jurisdiction, and conversation id. The response must include answer text, citations, retrieved source ids, and a confidence status.
 
+### `POST /v1/admin/assistant-sources`
+
+Requires an `admin` or `editor` Firebase custom claim. Creates an assistant education source draft from approved Orthodox material.
+
+```json
+{
+  "title": "Holy Icons and Veneration",
+  "topic": "Catechism",
+  "language": "en",
+  "citation": "Seventh Ecumenical Council; approved catechism notes",
+  "summary": "string",
+  "status": "draft"
+}
+```
+
+### `PATCH /v1/admin/assistant-sources/{sourceId}`
+
+Requires an `admin` custom claim. Updates review status, approval metadata, archive state, and source text. Approved sources become eligible for RAG retrieval.
+
+### `GET /v1/admin/moderation`
+
+Requires an `admin` custom claim. Returns pending prayer requests, content reports, assistant source review items, and audit metadata.
+
 ## Error Model
 
 ```json

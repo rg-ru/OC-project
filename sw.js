@@ -1,4 +1,4 @@
-const CACHE_NAME = "orthodox-companion-v11";
+const CACHE_NAME = "orthodox-companion-v12";
 const ASSETS = [
   ".",
   "index.html",

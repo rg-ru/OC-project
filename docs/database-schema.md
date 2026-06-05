@@ -12,12 +12,15 @@ This schema is the planned Firestore model for the Flutter and Firebase phase.
   "email": "string",
   "language": "en|de|ru|el|sr|ro",
   "jurisdiction": "antiochian|greek|oca|romanian|russian|serbian",
-  "roles": ["user"],
+  "roles": ["user|editor|admin"],
+  "authProviders": ["password|google.com|apple.com"],
   "createdAt": "timestamp",
   "lastActiveAt": "timestamp",
   "gdprConsentVersion": "string"
 }
 ```
+
+Admin access must be granted by server-side Firebase custom claims, not by trusting this profile document alone.
 
 ### `users/{userId}/favorites/{favoriteId}`
 
@@ -124,7 +127,12 @@ This schema is the planned Firestore model for the Flutter and Firebase phase.
   "title": "string",
   "language": "en",
   "tradition": "canonical|patristic|liturgical|catechism",
+  "topic": "string",
+  "summary": "string",
   "storagePath": "string",
+  "status": "draft|review|approved|archived",
+  "createdBy": "userId",
+  "reviewedBy": "userId|null",
   "approvedBy": "userId",
   "approvedAt": "timestamp",
   "citation": "string"
@@ -151,3 +159,5 @@ This schema is the planned Firestore model for the Flutter and Firebase phase.
 - Prayer requests can be created by authenticated or anonymous users but are not public until approved.
 - Admin and editor writes require role claims.
 - Assistant source ingestion requires an editor or clergy reviewer role.
+- Normal accounts can read approved assistant sources only.
+- Admin accounts can create, edit, approve, archive, and audit assistant education material.

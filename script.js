@@ -2,7 +2,10 @@ const CONSENT_KEY = "oc:consent";
 const CONSENT_COOKIE = "oc_cookie_consent";
 const CONSENT_MAX_AGE_SECONDS = 60 * 60 * 24 * 180;
 const DESIGN_VERSION_KEY = "oc:designVersion";
-const CURRENT_DESIGN_VERSION = "ios26-v11";
+const CURRENT_DESIGN_VERSION = "ios26-v12";
+const AUTH_SESSION_KEY = "oc:authSession";
+const ADMIN_SOURCE_KEY = "oc:adminSources";
+const ADMIN_EMAILS = ["admin@orthodox-companion.app"];
 const DEFAULT_CONSENT = {
   necessary: true,
   preferences: false,
@@ -183,6 +186,7 @@ const APP_TRANSLATIONS = {
     "nav.library": "Library",
     "nav.prayer": "Prayer",
     "nav.assistant": "Assistant",
+    "nav.account": "Account",
     "nav.admin": "Admin",
     "nav.settings": "Settings",
     "nav.legal": "Legal",
@@ -266,6 +270,7 @@ const APP_TRANSLATIONS = {
     "nav.library": "Bibliothek",
     "nav.prayer": "Gebet",
     "nav.assistant": "Assistent",
+    "nav.account": "Konto",
     "nav.admin": "Admin",
     "nav.settings": "Einstellungen",
     "nav.legal": "Recht",
@@ -349,6 +354,7 @@ const APP_TRANSLATIONS = {
     "nav.library": "Библиотека",
     "nav.prayer": "Молитва",
     "nav.assistant": "Помощник",
+    "nav.account": "Аккаунт",
     "nav.admin": "Админ",
     "nav.settings": "Настройки",
     "nav.legal": "Право",
@@ -432,6 +438,7 @@ const APP_TRANSLATIONS = {
     "nav.library": "Βιβλιοθήκη",
     "nav.prayer": "Προσευχή",
     "nav.assistant": "Βοηθός",
+    "nav.account": "Λογαριασμός",
     "nav.admin": "Διαχείριση",
     "nav.settings": "Ρυθμίσεις",
     "nav.legal": "Νομικά",
@@ -449,6 +456,7 @@ const APP_TRANSLATIONS = {
     "nav.library": "Библиотека",
     "nav.prayer": "Молитва",
     "nav.assistant": "Помоћник",
+    "nav.account": "Налог",
     "nav.admin": "Админ",
     "nav.settings": "Подешавања",
     "nav.legal": "Правно",
@@ -466,6 +474,7 @@ const APP_TRANSLATIONS = {
     "nav.library": "Bibliotecă",
     "nav.prayer": "Rugăciune",
     "nav.assistant": "Asistent",
+    "nav.account": "Cont",
     "nav.admin": "Admin",
     "nav.settings": "Setări",
     "nav.legal": "Legal",
@@ -488,6 +497,26 @@ function normalizeColor(value, fallback) {
 
 function readCustomColor(setting) {
   return normalizeColor(readStorage(CUSTOM_COLOR_STORAGE_KEYS[setting], CUSTOM_COLOR_DEFAULTS[setting]), CUSTOM_COLOR_DEFAULTS[setting]);
+}
+
+function inferRole(email = "") {
+  return ADMIN_EMAILS.includes(email.trim().toLowerCase()) ? "admin" : "member";
+}
+
+function readAuthSession() {
+  try {
+    const session = JSON.parse(readStorage(AUTH_SESSION_KEY, "null"));
+    if (!session?.email || !session?.role) return null;
+    return {
+      name: session.name || session.email.split("@")[0],
+      email: session.email,
+      provider: session.provider || "email",
+      role: session.role === "admin" ? "admin" : "member",
+      signedInAt: session.signedInAt || new Date().toISOString(),
+    };
+  } catch {
+    return null;
+  }
 }
 
 function migrateDesignPreferences() {
@@ -531,6 +560,7 @@ const state = {
   flashFlipped: false,
   plan: readStorage("oc:plan", "new-testament"),
   userPosition: null,
+  authSession: readAuthSession(),
 };
 
 const feastData = [
@@ -698,6 +728,18 @@ const sourceLibrary = [
   { id: "services", title: "Liturgical texts", scope: "Feasts, prayers, and worship language" },
   { id: "fathers", title: "Church Fathers", scope: "Patristic explanations with citations" },
   { id: "catechism", title: "Approved catechism library", scope: "Simple teaching summaries reviewed by clergy" },
+];
+
+const starterAdminSources = [
+  {
+    id: "admin-icons-veneration",
+    title: "Holy Icons and Veneration",
+    topic: "Catechism",
+    citation: "Seventh Ecumenical Council; approved catechism notes",
+    body: "Icons are venerated, not worshiped. Honor offered before an icon passes to the person depicted and confesses that the Son of God truly became visible in the flesh.",
+    approved: true,
+    addedBy: "seed",
+  },
 ];
 
 const apiStatus = [
@@ -1126,6 +1168,39 @@ function resultItem(title, meta, detail) {
   `;
 }
 
+function getAdminSources() {
+  try {
+    const saved = JSON.parse(readStorage(ADMIN_SOURCE_KEY, "[]"));
+    return [...starterAdminSources, ...saved];
+  } catch {
+    return [...starterAdminSources];
+  }
+}
+
+function getApprovedAssistantSources() {
+  return [
+    ...sourceLibrary.map((source) => ({
+      id: source.id,
+      title: source.title,
+      topic: source.id,
+      citation: source.title,
+      body: source.scope,
+      approved: true,
+      system: true,
+    })),
+    ...getAdminSources().filter((source) => source.approved),
+  ];
+}
+
+function saveAdminSource(source) {
+  const saved = getAdminSources().filter((item) => item.addedBy !== "seed");
+  writeStorage(ADMIN_SOURCE_KEY, JSON.stringify([source, ...saved].slice(0, 40)));
+}
+
+function isAdmin() {
+  return state.authSession?.role === "admin";
+}
+
 function renderLocationStatus(message) {
   const status = $("#location-status");
   if (!status) return;
@@ -1231,7 +1306,7 @@ function renderPrayers() {
 }
 
 function renderAssistant() {
-  $("#source-list").innerHTML = sourceLibrary.map((source) => resultItem(source.title, source.id, source.scope)).join("");
+  $("#source-list").innerHTML = getApprovedAssistantSources().map((source) => resultItem(source.title, source.topic || source.id, source.citation || source.body)).join("");
   const history = JSON.parse(readStorage("oc:chat", "[]"));
   if (history.length === 0) {
     history.push({
@@ -1244,6 +1319,13 @@ function renderAssistant() {
 
 function answerQuestion(question) {
   const normalized = question.toLowerCase();
+  const sourceMatch = getApprovedAssistantSources().find((source) => {
+    const haystack = `${source.title} ${source.topic} ${source.citation} ${source.body}`.toLowerCase();
+    return normalized.split(/\s+/).filter((word) => word.length > 4).some((word) => haystack.includes(word));
+  });
+  if (sourceMatch) {
+    return `${sourceMatch.body} Citation: ${sourceMatch.citation}.`;
+  }
   if (normalized.includes("fast")) {
     return "Fasting is ascetic medicine practiced with prayer, repentance, almsgiving, and guidance from one's priest. Citation model: liturgical calendar, pastoral catechism, and fasting rule endpoint.";
   }
@@ -1259,7 +1341,56 @@ function answerQuestion(question) {
   return "This needs a reviewed source match before a confident answer. The production assistant should retrieve approved passages, rank them, answer briefly, and cite every claim.";
 }
 
+function renderAccount() {
+  const session = state.authSession;
+  const signedOut = $("#signed-out-view");
+  const signedIn = $("#signed-in-view");
+  const roleChip = $("#account-role-chip");
+  const accountPill = $("#account-pill");
+  if (!signedOut || !signedIn || !roleChip || !accountPill) return;
+
+  signedOut.hidden = Boolean(session);
+  signedIn.hidden = !session;
+
+  if (!session) {
+    roleChip.textContent = "Guest mode";
+    accountPill.textContent = "Sign in";
+    accountPill.classList.remove("admin");
+    return;
+  }
+
+  const initials = session.name
+    .split(/\s+/)
+    .map((part) => part[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+  $("#account-avatar").textContent = initials || "OC";
+  $("#account-name").textContent = session.name;
+  $("#account-email").textContent = `${session.email} · ${session.provider}`;
+  $("#account-role").textContent = session.role === "admin" ? "Admin" : "Member";
+  $("#account-role-detail").textContent =
+    session.role === "admin"
+      ? "Admins can manage education sources, moderation queues, and restricted operational surfaces."
+      : "Members can use the app, save progress locally, and access community features. Admin-only tools remain hidden.";
+  $("#account-admin-link").hidden = session.role !== "admin";
+  roleChip.textContent = session.role === "admin" ? "Admin account" : "Member account";
+  accountPill.textContent = session.role === "admin" ? "Admin" : session.name.split(" ")[0] || "Account";
+  accountPill.classList.toggle("admin", session.role === "admin");
+}
+
 function renderAdmin() {
+  const locked = $("#admin-locked");
+  const dashboard = $("#admin-dashboard");
+  const chip = $("#admin-access-chip");
+  if (!locked || !dashboard || !chip) return;
+  const admin = isAdmin();
+  locked.hidden = admin;
+  dashboard.hidden = !admin;
+  chip.textContent = admin ? "Admin access granted" : "Admin-only";
+  if (!admin) return;
+
+  renderAdminSources();
   $("#content-queue").innerHTML = contentQueue.map((item) => resultItem(item.title, "Editorial review", item.detail)).join("");
   const prayers = getPrayers();
   $("#moderation-queue").innerHTML = prayers
@@ -1267,6 +1398,22 @@ function renderAdmin() {
     .map((item) => resultItem(item.name, "Prayer request", item.text))
     .join("") || resultItem("No pending requests", "Moderation", "New submissions are marked pending in the production Firestore workflow.");
   $("#api-health").innerHTML = apiStatus.map((item) => resultItem(item.title, "REST API", item.detail)).join("");
+}
+
+function renderAdminSources() {
+  const sources = getAdminSources();
+  $("#admin-source-list").innerHTML = sources
+    .map(
+      (source) => `
+        <div class="result-item">
+          <h4>${escapeHtml(source.title)}</h4>
+          <p>${escapeHtml(source.topic)} · ${source.approved ? "Approved for assistant" : "Draft only"}</p>
+          <p>${escapeHtml(source.citation)}</p>
+          <p>${escapeHtml(source.body)}</p>
+        </div>
+      `,
+    )
+    .join("");
 }
 
 function renderReadingsView() {
@@ -1301,6 +1448,8 @@ const LOCAL_APP_DATA_KEYS = [
   "oc:readingNote",
   "oc:prayers",
   "oc:chat",
+  AUTH_SESSION_KEY,
+  ADMIN_SOURCE_KEY,
 ];
 
 function openConsentModal() {
@@ -1343,6 +1492,7 @@ function clearLocalAppData() {
   state.quoteIndex = 0;
   state.plan = "new-testament";
   state.userPosition = null;
+  state.authSession = null;
   $("#jurisdiction-select").value = state.jurisdiction;
   applyPersonalization();
   renderAll();
@@ -1355,6 +1505,54 @@ function resetConsent() {
   renderChurches(churches);
   renderLocationStatus();
   renderConsentBanner();
+}
+
+function signInWithSession({ name, email, provider }) {
+  const normalizedEmail = email.trim().toLowerCase();
+  const session = {
+    name: name?.trim() || normalizedEmail.split("@")[0],
+    email: normalizedEmail,
+    provider,
+    role: inferRole(normalizedEmail),
+    signedInAt: new Date().toISOString(),
+  };
+  state.authSession = session;
+  writeStorage(AUTH_SESSION_KEY, JSON.stringify(session));
+  renderAccount();
+  renderAdmin();
+}
+
+function signOut() {
+  state.authSession = null;
+  removeStorage(AUTH_SESSION_KEY);
+  renderAccount();
+  renderAdmin();
+}
+
+function createProviderSession(provider) {
+  const email = provider === "apple" ? "apple.user@example.com" : "google.user@example.com";
+  const name = provider === "apple" ? "Apple User" : "Google User";
+  signInWithSession({ name, email, provider });
+}
+
+function handleAdminSourceSubmit(event) {
+  event.preventDefault();
+  if (!isAdmin()) return;
+  const source = {
+    id: `admin-${Date.now()}`,
+    title: $("#admin-source-title").value.trim(),
+    topic: $("#admin-source-topic").value.trim(),
+    citation: $("#admin-source-citation").value.trim(),
+    body: $("#admin-source-body").value.trim(),
+    approved: $("#admin-source-approved").checked,
+    addedBy: state.authSession.email,
+  };
+  if (!source.title || !source.topic || !source.citation || !source.body) return;
+  saveAdminSource(source);
+  event.target.reset();
+  $("#admin-source-approved").checked = true;
+  renderAdminSources();
+  renderAssistant();
 }
 
 function initEvents() {
@@ -1494,6 +1692,22 @@ function initEvents() {
     $("#assistant-input").value = "";
     renderAssistant();
   });
+
+  $("#email-auth-form").addEventListener("submit", (event) => {
+    event.preventDefault();
+    signInWithSession({
+      name: $("#auth-name").value,
+      email: $("#auth-email").value,
+      provider: "email",
+    });
+  });
+
+  $$("[data-auth-provider]").forEach((button) => {
+    button.addEventListener("click", () => createProviderSession(button.dataset.authProvider));
+  });
+
+  $("#sign-out").addEventListener("click", signOut);
+  $("#admin-source-form").addEventListener("submit", handleAdminSourceSubmit);
 
   $("#global-search").addEventListener("input", renderGlobalSearch);
 
@@ -1774,6 +1988,7 @@ function renderAll() {
   renderLibrary();
   renderPrayers();
   renderAssistant();
+  renderAccount();
   renderAdmin();
   renderSettings();
   applyLanguage();
