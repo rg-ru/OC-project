@@ -53,8 +53,15 @@ for (const marker of ["WKWebView", "https://rg-ru.github.io/OC-project/?app=ios"
 }
 
 for (const plist of ["OrthodoxCompanion/Info.plist", "OrthodoxCompanion/PrivacyInfo.xcprivacy"]) {
-  const result = spawnSync("plutil", ["-lint", path.join(iosRoot, plist)], { encoding: "utf8" });
-  if (result.status !== 0) failures.push(`Invalid plist ${plist}: ${result.stderr || result.stdout}`);
+  const plistPath = path.join(iosRoot, plist);
+  const plistText = fs.readFileSync(plistPath, "utf8");
+  if (!plistText.includes("<plist") || !plistText.includes("</plist>")) {
+    failures.push(`Invalid plist shape ${plist}`);
+  }
+  if (process.platform === "darwin") {
+    const result = spawnSync("plutil", ["-lint", plistPath], { encoding: "utf8" });
+    if (result.status !== 0) failures.push(`Invalid plist ${plist}: ${result.stderr || result.stdout || "plutil failed"}`);
+  }
 }
 
 if (failures.length > 0) {
