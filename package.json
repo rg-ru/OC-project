@@ -5,7 +5,9 @@
   "description": "Web-first Orthodox Companion PWA.",
   "scripts": {
     "start": "python3 -m http.server 4173",
-    "test": "node scripts/validate-site.js"
+    "test": "node scripts/validate-site.js && node scripts/validate-ios.js",
+    "test:web": "node scripts/validate-site.js",
+    "test:ios": "node scripts/validate-ios.js"
   },
   "engines": {
     "node": ">=18"

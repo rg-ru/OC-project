@@ -8,7 +8,7 @@ Run:
 npm test
 ```
 
-The validation script checks required files, core app sections, service worker assets, responsive CSS, manifest metadata, and key JavaScript feature implementations.
+The validation scripts check required files, core app sections, service worker assets, responsive CSS, manifest metadata, key JavaScript feature implementations, iOS project files, App Store docs, icons, and privacy manifests.
 
 ## Browser QA
 
@@ -36,6 +36,18 @@ The included GitHub Actions workflow:
 5. Deploys to GitHub Pages.
 
 ## App Store and Play Store Future Release
+
+The current repository includes an iOS App Store preparation track under `ios/`.
+
+For the iOS wrapper phase:
+
+- Open `ios/OrthodoxCompanion/OrthodoxCompanion.xcodeproj` in Xcode.
+- Select an Apple Developer Team in Signing & Capabilities.
+- Build on a real iPhone.
+- Archive with Product -> Archive.
+- Upload through Xcode Organizer to App Store Connect.
+- Use `ios/AppStore/` for metadata, privacy label draft, review notes, and release checklist.
+- Submit to TestFlight before App Review.
 
 For the Flutter phase:
 

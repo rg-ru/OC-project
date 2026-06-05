@@ -31,7 +31,11 @@ Then open `http://localhost:4173`.
 │   ├── database-schema.md
 │   ├── security-and-compliance.md
 │   └── testing-and-release.md
+├── ios/
+│   ├── AppStore/
+│   └── OrthodoxCompanion/
 ├── scripts/
+│   ├── validate-ios.js
 │   └── validate-site.js
 ├── .github/workflows/pages.yml
 ├── index.html
@@ -60,6 +64,7 @@ Then open `http://localhost:4173`.
 - iOS 26-inspired Liquid Glass navigation and controls, icon tab navigation, iOS/Android install metadata, square app icons, mobile safe-area spacing, a brighter Apple-system default look, clean grouped settings, and quiet content surfaces.
 - Optional Account tab with real Firebase Authentication integration for Google, Apple, and email/password sign-in, plus member/admin roles.
 - Admin-only dashboard for education source management, moderation, content review, API health, and adding approved Assistant teaching cards that normal accounts cannot access.
+- Native iOS App Store preparation under `ios/`, including an Xcode project, app icons, launch screen, privacy manifest, metadata drafts, and release checklist.
 - Cookie/local-storage consent, separate location consent for Church Finder, legal center, local data deletion, PWA manifest, service worker cache, responsive dark/light design, and GitHub Pages CI/CD.
 
 ## Legal and Privacy
