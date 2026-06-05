@@ -13,6 +13,9 @@ Planned roles:
 ## Firebase Controls
 
 - Firebase Authentication with verified providers.
+- Google, Apple, and Email/Password providers must be enabled in Firebase Authentication before the web buttons can complete sign-in.
+- The GitHub Pages domain must be listed as an authorized domain in Firebase Authentication.
+- Apple sign-in requires the Apple Services ID, return URL, and private key configuration in Firebase.
 - App Check for web and mobile clients.
 - Firestore security rules with owner checks and role claims.
 - Cloud Functions middleware for rate limiting, audit logs, and request validation.

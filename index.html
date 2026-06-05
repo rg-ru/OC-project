@@ -15,10 +15,10 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="format-detection" content="telephone=no" />
     <title>Orthodox Companion</title>
-    <link rel="manifest" href="site.webmanifest?v=ios26-v12" />
+    <link rel="manifest" href="site.webmanifest?v=ios26-v13" />
     <link rel="icon" href="assets/app-icon-192.png" />
     <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
-    <link rel="stylesheet" href="styles.css?v=ios26-v12" />
+    <link rel="stylesheet" href="styles.css?v=ios26-v13" />
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -384,7 +384,8 @@
             <article class="panel auth-card" id="auth-panel">
               <div id="signed-out-view">
                 <h3>Sign in to sync and unlock your role</h3>
-                <p class="muted-copy">Continue as a guest, or sign in with Google, Apple, or email. This web prototype stores the session locally; production should use Firebase Authentication.</p>
+                <p class="muted-copy">Continue as a guest, or sign in with Google, Apple, or email. These buttons use Firebase Authentication when the project configuration is connected.</p>
+                <div class="auth-status" id="auth-status" role="status">Checking Firebase Authentication...</div>
                 <div class="provider-grid">
                   <button class="provider-button" type="button" data-auth-provider="google">
                     <span class="provider-mark">G</span>
@@ -400,9 +401,11 @@
                   <input id="auth-name" class="field" type="text" placeholder="Maria" autocomplete="name" />
                   <label for="auth-email">Email</label>
                   <input id="auth-email" class="field" type="email" placeholder="you@example.com" autocomplete="email" required />
+                  <label for="auth-password">Password</label>
+                  <input id="auth-password" class="field" type="password" placeholder="At least 6 characters" autocomplete="current-password" minlength="6" required />
                   <button class="primary-action compact" type="submit">Continue with Email</button>
                 </form>
-                <p class="setting-hint">Demo admin account: sign in with admin@orthodox-companion.app. Real admin access must use Firebase custom claims.</p>
+                <p class="setting-hint">Admin access is read from Firebase custom claims, with admin@orthodox-companion.app kept as the local development fallback.</p>
               </div>
               <div id="signed-in-view" hidden>
                 <div class="account-summary">
@@ -428,7 +431,7 @@
               <div class="result-list">
                 <div class="result-item">
                   <h4>Firebase Authentication</h4>
-                  <p>Google, Apple, and email sign-in providers.</p>
+                  <p>Google, Apple, and email/password sign-in providers with real Firebase sessions.</p>
                 </div>
                 <div class="result-item">
                   <h4>Admin Custom Claims</h4>
@@ -830,6 +833,7 @@
       </section>
     </div>
 
-    <script src="script.js?v=ios26-v12" defer></script>
+    <script src="firebase-config.js?v=ios26-v13"></script>
+    <script src="script.js?v=ios26-v13" defer></script>
   </body>
 </html>

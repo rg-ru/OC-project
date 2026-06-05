@@ -1270,6 +1270,31 @@ body[data-density="spacious"] .chat-message {
   gap: 0.65rem;
 }
 
+.auth-status {
+  margin-top: 0.85rem;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--surface-solid) 96%, transparent);
+  color: var(--muted);
+  font-weight: 750;
+}
+
+.auth-status[data-tone="success"] {
+  border-color: color-mix(in srgb, var(--green) 42%, transparent);
+  color: var(--green);
+}
+
+.auth-status[data-tone="warning"] {
+  border-color: color-mix(in srgb, var(--gold) 42%, transparent);
+  color: var(--gold-bright);
+}
+
+.auth-status[data-tone="error"] {
+  border-color: color-mix(in srgb, var(--red) 42%, transparent);
+  color: var(--red);
+}
+
 .account-summary {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);

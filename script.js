@@ -2,10 +2,11 @@ const CONSENT_KEY = "oc:consent";
 const CONSENT_COOKIE = "oc_cookie_consent";
 const CONSENT_MAX_AGE_SECONDS = 60 * 60 * 24 * 180;
 const DESIGN_VERSION_KEY = "oc:designVersion";
-const CURRENT_DESIGN_VERSION = "ios26-v12";
+const CURRENT_DESIGN_VERSION = "ios26-v13";
 const AUTH_SESSION_KEY = "oc:authSession";
 const ADMIN_SOURCE_KEY = "oc:adminSources";
-const ADMIN_EMAILS = ["admin@orthodox-companion.app"];
+const FIREBASE_SDK_VERSION = "10.12.5";
+const ADMIN_EMAILS = window.ORTHODOX_COMPANION_ADMIN_EMAILS || ["admin@orthodox-companion.app"];
 const DEFAULT_CONSENT = {
   necessary: true,
   preferences: false,
@@ -517,6 +518,44 @@ function readAuthSession() {
   } catch {
     return null;
   }
+}
+
+function getFirebaseConfig() {
+  const config = window.ORTHODOX_COMPANION_FIREBASE_CONFIG || {};
+  return {
+    apiKey: config.apiKey || "",
+    authDomain: config.authDomain || "",
+    projectId: config.projectId || "",
+    appId: config.appId || "",
+    messagingSenderId: config.messagingSenderId || "",
+    storageBucket: config.storageBucket || "",
+    measurementId: config.measurementId || "",
+  };
+}
+
+function isFirebaseConfigured() {
+  const config = getFirebaseConfig();
+  return Boolean(config.apiKey && config.authDomain && config.projectId && config.appId);
+}
+
+let firebaseRuntimePromise;
+
+async function loadFirebaseRuntime() {
+  if (!isFirebaseConfigured()) {
+    throw new Error("Firebase Authentication is not configured yet.");
+  }
+  if (!firebaseRuntimePromise) {
+    firebaseRuntimePromise = Promise.all([
+      import(`https://www.gstatic.com/firebasejs/${FIREBASE_SDK_VERSION}/firebase-app.js`),
+      import(`https://www.gstatic.com/firebasejs/${FIREBASE_SDK_VERSION}/firebase-auth.js`),
+    ]).then(([appModule, authModule]) => {
+      const app = appModule.getApps().length ? appModule.getApp() : appModule.initializeApp(getFirebaseConfig());
+      const auth = authModule.getAuth(app);
+      auth.languageCode = navigator.language || appLocale();
+      return { app, auth, ...authModule };
+    });
+  }
+  return firebaseRuntimePromise;
 }
 
 function migrateDesignPreferences() {
@@ -1507,32 +1546,121 @@ function resetConsent() {
   renderConsentBanner();
 }
 
-function signInWithSession({ name, email, provider }) {
+function renderAuthStatus(message, tone = "neutral") {
+  const status = $("#auth-status");
+  if (!status) return;
+  status.textContent = message;
+  status.dataset.tone = tone;
+}
+
+async function syncFirebaseUser(user) {
+  const tokenResult = await user.getIdTokenResult().catch(() => ({ claims: {} }));
+  const email = user.email || "";
   const normalizedEmail = email.trim().toLowerCase();
+  const roleFromClaims = tokenResult.claims.admin || tokenResult.claims.role === "admin" || tokenResult.claims.roles?.includes?.("admin");
   const session = {
-    name: name?.trim() || normalizedEmail.split("@")[0],
+    uid: user.uid,
+    name: user.displayName || normalizedEmail.split("@")[0] || "Orthodox Companion User",
     email: normalizedEmail,
-    provider,
-    role: inferRole(normalizedEmail),
+    provider: user.providerData?.[0]?.providerId || "firebase",
+    role: roleFromClaims ? "admin" : inferRole(normalizedEmail),
+    firebase: true,
     signedInAt: new Date().toISOString(),
   };
   state.authSession = session;
   writeStorage(AUTH_SESSION_KEY, JSON.stringify(session));
   renderAccount();
   renderAdmin();
+  renderAuthStatus(`Signed in with ${session.provider}.`, "success");
 }
 
-function signOut() {
+function renderFirebaseSetupState() {
+  if (isFirebaseConfigured()) {
+    renderAuthStatus("Firebase Authentication connected. Google, Apple, and email sign-in are live.", "success");
+  } else {
+    renderAuthStatus("Firebase setup required: add your web app config to firebase-config.js and enable Google, Apple, and Email/Password providers.", "warning");
+  }
+}
+
+async function signOut() {
+  if (isFirebaseConfigured()) {
+    const { auth, signOut: firebaseSignOut } = await loadFirebaseRuntime();
+    await firebaseSignOut(auth).catch(() => {});
+  }
   state.authSession = null;
   removeStorage(AUTH_SESSION_KEY);
   renderAccount();
   renderAdmin();
+  renderFirebaseSetupState();
 }
 
-function createProviderSession(provider) {
-  const email = provider === "apple" ? "apple.user@example.com" : "google.user@example.com";
-  const name = provider === "apple" ? "Apple User" : "Google User";
-  signInWithSession({ name, email, provider });
+async function signInWithProvider(providerName) {
+  try {
+    const runtime = await loadFirebaseRuntime();
+    const provider = providerName === "apple" ? new runtime.OAuthProvider("apple.com") : new runtime.GoogleAuthProvider();
+    provider.addScope("email");
+    if (providerName === "apple") provider.addScope("name");
+    const result = await runtime.signInWithPopup(runtime.auth, provider);
+    await syncFirebaseUser(result.user);
+  } catch (error) {
+    const code = error?.code || "";
+    if (code.includes("popup-blocked") || code.includes("popup-closed-by-user")) {
+      try {
+        const runtime = await loadFirebaseRuntime();
+        const provider = providerName === "apple" ? new runtime.OAuthProvider("apple.com") : new runtime.GoogleAuthProvider();
+        provider.addScope("email");
+        if (providerName === "apple") provider.addScope("name");
+        await runtime.signInWithRedirect(runtime.auth, provider);
+        return;
+      } catch (redirectError) {
+        renderAuthStatus(redirectError.message || "Redirect sign-in could not start.", "error");
+        return;
+      }
+    }
+    renderAuthStatus(error?.message || "Sign-in could not start.", "error");
+  }
+}
+
+async function signInWithEmail(name, email, password) {
+  try {
+    const runtime = await loadFirebaseRuntime();
+    let credential;
+    try {
+      credential = await runtime.signInWithEmailAndPassword(runtime.auth, email, password);
+    } catch (error) {
+      if (error?.code === "auth/user-not-found" || error?.code === "auth/invalid-credential") {
+        credential = await runtime.createUserWithEmailAndPassword(runtime.auth, email, password);
+        if (name?.trim()) await runtime.updateProfile(credential.user, { displayName: name.trim() });
+      } else {
+        throw error;
+      }
+    }
+    await syncFirebaseUser(credential.user);
+  } catch (error) {
+    renderAuthStatus(error?.message || "Email sign-in failed.", "error");
+  }
+}
+
+async function initFirebaseAuth() {
+  renderFirebaseSetupState();
+  if (!isFirebaseConfigured()) return;
+  try {
+    const runtime = await loadFirebaseRuntime();
+    const redirectResult = await runtime.getRedirectResult(runtime.auth).catch(() => null);
+    if (redirectResult?.user) await syncFirebaseUser(redirectResult.user);
+    runtime.onAuthStateChanged(runtime.auth, (user) => {
+      if (user) {
+        syncFirebaseUser(user);
+      } else if (state.authSession?.firebase) {
+        state.authSession = null;
+        removeStorage(AUTH_SESSION_KEY);
+        renderAccount();
+        renderAdmin();
+      }
+    });
+  } catch (error) {
+    renderAuthStatus(error?.message || "Firebase Authentication could not initialize.", "error");
+  }
 }
 
 function handleAdminSourceSubmit(event) {
@@ -1695,15 +1823,11 @@ function initEvents() {
 
   $("#email-auth-form").addEventListener("submit", (event) => {
     event.preventDefault();
-    signInWithSession({
-      name: $("#auth-name").value,
-      email: $("#auth-email").value,
-      provider: "email",
-    });
+    signInWithEmail($("#auth-name").value, $("#auth-email").value, $("#auth-password").value);
   });
 
   $$("[data-auth-provider]").forEach((button) => {
-    button.addEventListener("click", () => createProviderSession(button.dataset.authProvider));
+    button.addEventListener("click", () => signInWithProvider(button.dataset.authProvider));
   });
 
   $("#sign-out").addEventListener("click", signOut);
@@ -2004,5 +2128,6 @@ applyPersonalization();
 initEvents();
 renderConsentBanner();
 renderAll();
+initFirebaseAuth();
 requestAnimationFrame(scrollToCurrentSection);
 registerServiceWorker();

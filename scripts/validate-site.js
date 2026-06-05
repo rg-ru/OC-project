@@ -6,6 +6,7 @@ const requiredFiles = [
   "index.html",
   "styles.css",
   "script.js",
+  "firebase-config.js",
   "site.webmanifest",
   "sw.js",
   "assets/byzantine-hero.png",
@@ -82,15 +83,21 @@ for (const marker of ["settings-preview-title", "data-setting=\"accent\"", "data
   }
 }
 
-for (const marker of ["nav-icon", "ios26-v12"]) {
+for (const marker of ["nav-icon", "ios26-v13"]) {
   if (!html.includes(marker)) {
     failures.push(`Missing iPhone app shell marker ${marker}`);
   }
 }
 
-for (const marker of ["email-auth-form", "admin-source-form", "admin-locked"]) {
+for (const marker of ["email-auth-form", "admin-source-form", "admin-locked", "firebase-config.js"]) {
   if (!html.includes(marker)) {
     failures.push(`Missing account/admin marker ${marker}`);
+  }
+}
+
+for (const marker of ["GoogleAuthProvider", "OAuthProvider", "signInWithPopup", "createUserWithEmailAndPassword"]) {
+  if (!script.includes(marker)) {
+    failures.push(`Missing real Firebase Auth marker ${marker}`);
   }
 }
 

@@ -1,9 +1,10 @@
-const CACHE_NAME = "orthodox-companion-v12";
+const CACHE_NAME = "orthodox-companion-v13";
 const ASSETS = [
   ".",
   "index.html",
   "styles.css",
   "script.js",
+  "firebase-config.js",
   "site.webmanifest",
   "assets/byzantine-hero.png",
   "assets/app-icon-192.png",

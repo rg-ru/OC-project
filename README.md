@@ -35,6 +35,7 @@ Then open `http://localhost:4173`.
 │   └── validate-site.js
 ├── .github/workflows/pages.yml
 ├── index.html
+├── firebase-config.js
 ├── script.js
 ├── site.webmanifest
 ├── styles.css
@@ -57,7 +58,7 @@ Then open `http://localhost:4173`.
 - Senior-friendly simple mode with larger text, clearer touch targets, calmer backgrounds, reduced motion, and easier mobile navigation.
 - App language selector for English, German, Russian, Greek, Serbian, and Romanian, with the core shell translated and safe English fallback for untranslated detail labels.
 - iOS 26-inspired Liquid Glass navigation and controls, icon tab navigation, iOS/Android install metadata, square app icons, mobile safe-area spacing, a brighter Apple-system default look, clean grouped settings, and quiet content surfaces.
-- Optional Account tab with Google, Apple, and email sign-in UX, local demo sessions, member/admin roles, and a Firebase-ready custom-claims model.
+- Optional Account tab with real Firebase Authentication integration for Google, Apple, and email/password sign-in, plus member/admin roles.
 - Admin-only dashboard for education source management, moderation, content review, API health, and adding approved Assistant teaching cards that normal accounts cannot access.
 - Cookie/local-storage consent, separate location consent for Church Finder, legal center, local data deletion, PWA manifest, service worker cache, responsive dark/light design, and GitHub Pages CI/CD.
 
@@ -66,6 +67,16 @@ Then open `http://localhost:4173`.
 The web app includes an in-page Privacy Policy, Cookie and Local Storage Policy, Terms of Use, and Imprint / Legal Notice. It also includes explicit consent UX for optional location-assisted church sorting.
 
 This is a prototype legal scaffold. Before a real public or commercial launch, replace the placeholder operator/contact details and have the legal text reviewed for the actual entity, hosting setup, Firebase backend, AI processing, analytics, moderation, app stores, and jurisdictions served.
+
+## Firebase Authentication Setup
+
+The sign-in buttons call the Firebase JavaScript SDK directly. To make Google, Apple, and email sign-in work on the live GitHub Pages site:
+
+1. Create a Firebase Web App and copy its public web config into `firebase-config.js`.
+2. In Firebase Authentication, enable Google, Apple, and Email/Password sign-in providers.
+3. Add `rg-ru.github.io` to Firebase Authentication authorized domains.
+4. For Apple, configure the required Apple Services ID, return URL, and private key in Firebase.
+5. Assign real admin access with Firebase custom claims. The email fallback in the web prototype is only for local development.
 
 ## Product Roadmap
 
@@ -92,7 +103,7 @@ Planned core modules:
 Planned platform capabilities:
 
 - User accounts, cloud sync, push notifications, offline mode, global search, analytics, user profiles, admin dashboard, and dark/light themes.
-- The current static website simulates auth locally for UX and role-gating. Production should connect Firebase Authentication providers, assign admin access through server-side custom claims, and protect Firestore/Cloud Functions with role-based security rules.
+- The current static website uses Firebase Auth when `firebase-config.js` is filled. Admin access should be assigned through server-side custom claims and protected by Firestore/Cloud Functions security rules.
 - Multilingual support for English, German, Russian, Greek, Serbian, and Romanian.
 - Firebase Authentication, Firestore, Cloud Functions, Cloud Storage, and Firebase Messaging.
 - RAG architecture with a vector database, approved Orthodox source library, and source citation system.
