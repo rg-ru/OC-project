@@ -1,6 +1,8 @@
 const CONSENT_KEY = "oc:consent";
 const CONSENT_COOKIE = "oc_cookie_consent";
 const CONSENT_MAX_AGE_SECONDS = 60 * 60 * 24 * 180;
+const DESIGN_VERSION_KEY = "oc:designVersion";
+const CURRENT_DESIGN_VERSION = "ios26-v11";
 const DEFAULT_CONSENT = {
   necessary: true,
   preferences: false,
@@ -78,11 +80,11 @@ function consentAllows(category) {
 const PERSONALIZATION_DEFAULTS = {
   appLanguage: "en",
   simpleMode: "off",
-  theme: "dark",
+  theme: "light",
   accent: "system",
   textScale: "standard",
   density: "comfortable",
-  background: "rich",
+  background: "soft",
   motion: "normal",
 };
 
@@ -487,6 +489,25 @@ function normalizeColor(value, fallback) {
 function readCustomColor(setting) {
   return normalizeColor(readStorage(CUSTOM_COLOR_STORAGE_KEYS[setting], CUSTOM_COLOR_DEFAULTS[setting]), CUSTOM_COLOR_DEFAULTS[setting]);
 }
+
+function migrateDesignPreferences() {
+  if (readStorage(DESIGN_VERSION_KEY) === CURRENT_DESIGN_VERSION) return;
+  const nextDefaults = {
+    theme: "light",
+    accent: "system",
+    background: "soft",
+    motion: "normal",
+  };
+  Object.entries(nextDefaults).forEach(([setting, value]) => {
+    writeStorage(PERSONALIZATION_STORAGE_KEYS[setting], value);
+  });
+  Object.entries(CUSTOM_COLOR_DEFAULTS).forEach(([setting, value]) => {
+    writeStorage(CUSTOM_COLOR_STORAGE_KEYS[setting], value);
+  });
+  writeStorage(DESIGN_VERSION_KEY, CURRENT_DESIGN_VERSION);
+}
+
+migrateDesignPreferences();
 
 const state = {
   jurisdiction: readStorage("oc:j", "antiochian"),

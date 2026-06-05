@@ -81,7 +81,7 @@ for (const marker of ["settings-preview-title", "data-setting=\"accent\"", "data
   }
 }
 
-for (const marker of ["nav-icon", "apple-v9"]) {
+for (const marker of ["nav-icon", "ios26-v11"]) {
   if (!html.includes(marker)) {
     failures.push(`Missing iPhone app shell marker ${marker}`);
   }
